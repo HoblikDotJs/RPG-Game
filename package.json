@@ -13,7 +13,6 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.17.1",
-    "googleapis": "^48.0.0",
-    "nedb": "^1.8.0"
+    "googleapis": "^48.0.0"
   }
 }
