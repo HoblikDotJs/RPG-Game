@@ -1,0 +1,19 @@
+{
+  "name": "rpgsg-server",
+  "version": "1.0.0",
+  "description": "An attempt to use node on rpgsg",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "rpgsg"
+  ],
+  "author": "HoblikDotJs",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1",
+    "googleapis": "^48.0.0",
+    "nedb": "^1.8.0"
+  }
+}

@@ -1,0 +1,201 @@
+{
+    "w34tik": {
+        "bossLvl": 0,
+        "character": {
+            "armor": 10,
+            "damage": 20,
+            "hp": 150,
+            "luck": 55,
+            "magicResistance": 5,
+            "regen": 1,
+            "weight": 70
+        },
+        "fame": 4,
+        "gold": 40,
+        "lvl": 1,
+        "name": "w34tik",
+        "onQuest": 0,
+        "password": "114039004815570385494",
+        "shopItems": [{
+            "name": "Rusty Sword",
+            "price": "50",
+            "properties": {
+                "armor": "6",
+                "damage": "15",
+                "hp": "2",
+                "luck": "0",
+                "magicResistance": "2",
+                "regen": "2",
+                "weight": "3"
+            },
+            "slot": "rightArm"
+        }, {
+            "name": "Silver Armor",
+            "price": "250000",
+            "properties": {
+                "armor": "12",
+                "damage": "5",
+                "hp": "5",
+                "luck": "5",
+                "magicResistance": "7",
+                "regen": "2",
+                "weight": "20"
+            },
+            "slot": "body"
+        }, {
+            "name": "Spider Necklace",
+            "price": "1000",
+            "properties": {
+                "armor": "2",
+                "damage": "5",
+                "hp": "7",
+                "luck": "10",
+                "magicResistance": "0",
+                "regen": "0",
+                "weight": "2"
+            },
+            "slot": "neck"
+        }],
+        "slots": {
+            "body": {
+                "name": "Nothing",
+                "price": "0",
+                "properties": {
+                    "luck": "1"
+                },
+                "slot": "body"
+            },
+            "leftArm": {
+                "name": "Nothing",
+                "price": "0",
+                "properties": {
+                    "luck": "1"
+                },
+                "slot": "leftArm"
+            },
+            "neck": {
+                "name": "Nothing",
+                "price": "0",
+                "properties": {
+                    "luck": "1"
+                },
+                "slot": "neck"
+            },
+            "rightArm": {
+                "name": "Nothing",
+                "price": "0",
+                "properties": {
+                    "luck": "1"
+                },
+                "slot": "rightArm"
+            },
+            "ring": {
+                "name": "Nothing",
+                "price": "0",
+                "properties": {
+                    "luck": "1"
+                },
+                "slot": "ring"
+            }
+        },
+        "times": {
+            "arena": 1584373982000,
+            "monsters": 0,
+            "quest": 0,
+            "shop": 1584183569000
+        },
+        "upgradeCharacter": {
+            "armor": 0,
+            "damage": 0,
+            "hp": 0,
+            "luck": 0,
+            "magicResistance": 0,
+            "regen": 0,
+            "weight": 0
+        },
+        "xp": 0
+    },
+    "Opa": {
+        "onQuest": false,
+        "name": "Opa",
+        "password": "109379172835274752707",
+        "bossLvl": 0,
+        "lvl": 1,
+        "xp": 0,
+        "gold": 0,
+        "fame": 0,
+        "messages": [],
+        "questAvailable": [],
+        "character": {
+            "hp": 150,
+            "damage": 20,
+            "armor": 10,
+            "luck": 50,
+            "weight": 70,
+            "regen": 1,
+            "magicResistance": 5
+        },
+        "spellSlot": [{
+            "damage": 20,
+            "name": "Fireball"
+        }],
+        "shopItems": [],
+        "upgradeCharacter": {
+            "hp": 0,
+            "damage": 0,
+            "armor": 0,
+            "luck": 0,
+            "weight": 0,
+            "regen": 0,
+            "magicResistance": 0
+        },
+        "slots": {
+            "body": {
+                "name": "Nothing",
+                "price": "0",
+                "properties": {
+                    "luck": "1"
+                },
+                "slot": "body"
+            },
+            "leftArm": {
+                "name": "Nothing",
+                "price": "0",
+                "properties": {
+                    "luck": "1"
+                },
+                "slot": "leftArm"
+            },
+            "rightArm": {
+                "name": "Nothing",
+                "price": "0",
+                "properties": {
+                    "luck": "1"
+                },
+                "slot": "rightArm"
+            },
+            "ring": {
+                "name": "Nothing",
+                "price": "0",
+                "properties": {
+                    "luck": "1"
+                },
+                "slot": "ring"
+            },
+            "neck": {
+                "name": "Nothing",
+                "price": "0",
+                "properties": {
+                    "luck": "1"
+                },
+                "slot": "neck"
+            }
+        },
+        "times": {
+            "arena": 0,
+            "monsters": 0,
+            "quest": 0,
+            "shop": 0
+        }
+    }
+}
