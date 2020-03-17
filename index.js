@@ -1,5 +1,4 @@
 const express = require("express")
-//const Datastore = require("nedb");
 const fs = require("fs");
 const app = express()
 const port = process.env.PORT || 5000;
@@ -10,8 +9,8 @@ app.use(express.static("public"));
 app.use(express.json({
     limit: "1mb"
 }));
-const _ = JSON.parse(fs.readFileSync("firebasedatabase.json")) //new Datastore("database.db");
-db = _; //database.loadDatabase();
+const _ = JSON.parse(fs.readFileSync("firebasedatabase.json"))
+let db = _;
 const weapons = JSON.parse(fs.readFileSync("public/weapons.json"))
 app.post("/login", (request, response) => {
     let found = false;
