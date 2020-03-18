@@ -8,12 +8,16 @@ let npcArr = [];
 let times = {
 	monsterS: undefined,
 	monsterM: undefined,
+	monster: undefined,
 	arenaS: undefined,
 	arenaM: undefined,
+	arena: undefined,
 	shopS: undefined,
 	shopM: undefined,
+	shop: undefined,
 	questM: undefined,
 	questS: undefined,
+	quest: undefined,
 }
 let screenButtons = {
 	signout: undefined,
@@ -117,69 +121,87 @@ function showBestPlayers() {
 }
 
 // redirect to quests
-function showQuests() {
-	firebase.database().ref("users/" + player.name + "/times/quest").once("value", (s) => {
-		let oldTime = s.val();
-		let newTime = Date.parse(new Date());
-		if (newTime - oldTime > player.onQuest) {
-			if (player.onQuest) { // player finished the quest and now its fight time!
-				blank();
-				changeBackground("images/blank.jpg");
-				for (let q in player.questAvailable) {
-					if (player.questAvailable[q].sel) {
-						player.doQuest(player.questAvailable[q]);
-					}
+async function showQuests() {
+	player.saveState()
+	const response = await fetch("/questVerification", {
+		method: "POST",
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			"id": player.password
+		})
+	});
+	const oldTime = await response.json();
+	let newTime = Date.parse(new Date());
+	if (newTime - oldTime > player.onQuest) {
+		if (player.onQuest) { // player finished the quest and now its fight time!
+			blank();
+			changeBackground("images/blank.jpg");
+			for (let q in player.questAvailable) {
+				if (player.questAvailable[q].sel) {
+					player.doQuest(player.questAvailable[q]);
 				}
-			} else { // selecting a quest and quests are shown
-				blank();
-				changeBackground("images/blank.jpg");
-				addBackButton();
-				let quests;
-				if (player.questAvailable.length != 3) {
-					quests = randomQuests(3);
-					player.questAvailable = quests;
-					player.saveState();
-				} else {
-					quests = player.questAvailable;
-				}
-				let selected = 0;
-				$("#screen").append($("<center><div class='container'><div id='questDiv' class='row'><div class='col-lg-8'> <ul id='questSelector' class='selectpicker' data-style='btn-dark'> </ul> </div></div></div></center>"));
-				$("#questDiv").append($("<div class='col-lg-4' id='questDescription'><p id='des'>" + quests[selected].description + "</p></div>"))
-				$("#questDiv").append($("<div class='col-lg-4' id='questXpDiv'><p id='xpRew'>" + quests[selected].xpReward + " xp </p></div>"));
-				$("#questDiv").append($("<div class='col-lg-4' id='questTimeDiv'><p id='questTime'>" + quests[selected].time / 60000 + " min </p></div>"));
-				$("#questDiv").append($("<div class='col-lg-4' id='questGoldRewDiv'><p id='goldRew'>" + quests[selected].goldReward + " gold </p></div>"))
-				for (let i = 0; i < quests.length; i++) {
-					$("#questSelector").append($("<li>" + quests[i].name + "</li>").click(() => {
-						selected = i;
-						$("#des").html(quests[selected].description);
-						$("#xpRew").html(quests[selected].xpReward + " xp");
-						$("#goldRew").html(quests[selected].goldReward + " gold");
-						$("#questTime").html(quests[selected].time / 60000 + " min");
-					}));
-				}
-				$("#questDescription").append($("<div class='row'><div class='col-lg-12'><button class='btn btn-dark'>GO</button></div></div>").click(() => {
-					player.onQuest = quests[selected].time;
-					firebase.database().ref("users/" + player.name + "/times/quest").set(Date.parse(new Date()));
-					player.questAvailable[selected].sel = true;
-					player.saveState();
-					showQuests();
+			}
+		} else { // selecting a quest and quests are shown
+			blank();
+			changeBackground("images/blank.jpg");
+			addBackButton();
+			let quests;
+			if (player.questAvailable.length != 3) {
+				quests = randomQuests(3);
+				player.questAvailable = quests;
+				player.saveState();
+			} else {
+				quests = player.questAvailable;
+			}
+			let selected = 0;
+			$("#screen").append($("<center><div class='container'><div id='questDiv' class='row'><div class='col-lg-8'> <ul id='questSelector' class='selectpicker' data-style='btn-dark'> </ul> </div></div></div></center>"));
+			$("#questDiv").append($("<div class='col-lg-4' id='questDescription'><p id='des'>" + quests[selected].description + "</p></div>"))
+			$("#questDiv").append($("<div class='col-lg-4' id='questXpDiv'><p id='xpRew'>" + quests[selected].xpReward + " xp </p></div>"));
+			$("#questDiv").append($("<div class='col-lg-4' id='questTimeDiv'><p id='questTime'>" + quests[selected].time / 60000 + " min </p></div>"));
+			$("#questDiv").append($("<div class='col-lg-4' id='questGoldRewDiv'><p id='goldRew'>" + quests[selected].goldReward + " gold </p></div>"))
+			for (let i = 0; i < quests.length; i++) {
+				$("#questSelector").append($("<li>" + quests[i].name + "</li>").click(() => {
+					selected = i;
+					$("#des").html(quests[selected].description);
+					$("#xpRew").html(quests[selected].xpReward + " xp");
+					$("#goldRew").html(quests[selected].goldReward + " gold");
+					$("#questTime").html(quests[selected].time / 60000 + " min");
 				}));
 			}
-		} else { // player is in quest and waiting screen is shown
-			blank();
-			addBackButton();
-			changeBackground("images/blank.jpg");
-			$("#screen").append($("<center><p id='pbTime' style=''> </p></center>"));
-			$("#screen").append(progressBarCode);
-			let time = (player.onQuest - (newTime - oldTime)) / 1000
-			let min = Math.floor(time / 60);
-			let sec = Math.floor(time - min * 60);
-			let remaining = 100 - (time / (player.onQuest / 1000)) * 100;
-			$("#pb").css("width", remaining + "%");
-			$("#pbTime").html(min + " : " + sec);
-			loadingTimeout = setTimeout(showQuests, 1000);
+			$("#questDescription").append($("<div class='row'><div class='col-lg-12'><button class='btn btn-dark'>GO</button></div></div>").click(() => {
+				player.onQuest = quests[selected].time;
+				console.log(player.onQuest)
+				fetch("/questTime", {
+					method: "POST",
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						"id": player.password,
+						"time": Date.parse(new Date()),
+					})
+				});
+				player.questAvailable[selected].sel = true;
+				player.saveState();
+				showQuests();
+			}));
 		}
-	});
+	} else { // player is in quest and waiting screen is shown
+		blank();
+		addBackButton();
+		changeBackground("images/blank.jpg");
+		$("#screen").append($("<center><p id='pbTime' style=''> </p></center>"));
+		$("#screen").append(progressBarCode);
+		let time = (player.onQuest - (newTime - oldTime)) / 1000
+		let min = Math.floor(time / 60);
+		let sec = Math.floor(time - min * 60);
+		let remaining = 100 - (time / (player.onQuest / 1000)) * 100;
+		$("#pb").css("width", remaining + "%");
+		$("#pbTime").html(min + " : " + sec);
+		loadingTimeout = setTimeout(showQuests, 1000);
+	}
 }
 
 // fight in arena
@@ -267,64 +289,80 @@ function changeBackground(str) {
 }
 
 //updates all times(quest time, arena time...) 
-function updateTimes(str) {
-	firebase.database().ref("users/" + player.name + "/times").once("value", (data) => {
-		if (str === "load") { // just for loading into the game 
-			loadWorld();
-			//	console.log("You've been logged as " + myName);
-			setInterval(updateTimes, 1000);
-		}
-		let serverTimes = data.val();
-		let oldTime = serverTimes.monsters;
-		let newTime = Date.parse(new Date());
-		if (newTime - oldTime > 600000 * 6) {
-			times.monsterM = 0;
-			times.monsterS = 0;
-		} else {
-			let time = (600000 * 6 - (newTime - oldTime)) / 1000;
-			times.monsterM = Math.floor(time / 60);
-			times.monsterS = Math.floor(time - times.monsterM * 60);
-		}
-		oldTime = serverTimes.shop
-		if (newTime - oldTime > 600000) {
-			times.shopM = 0;
-			times.shopS = 0;
+async function updateTimes(str) {
+	const options = {
+		method: "POST",
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			"id": player.password
+		})
+	}
+	const response = await fetch("/times", options)
+	const serverTimes = await response.json();
+	if (serverTimes == "undefined") {
+		console.log("Failed to update times");
+		return;
+	}
+	if (str === "load") { // just for loading into the game 
+		loadWorld();
+		setInterval(updateTimes, 1000);
+	}
+	let oldTime = serverTimes.monsters;
+	let newTime = Date.parse(new Date());
+	times.monster = oldTime;
+	if (newTime - oldTime > 600000 * 6) {
+		times.monsterM = 0;
+		times.monsterS = 0;
+	} else {
+		let time = (600000 * 6 - (newTime - oldTime)) / 1000;
+		times.monsterM = Math.floor(time / 60);
+		times.monsterS = Math.floor(time - times.monsterM * 60);
+	}
+	oldTime = serverTimes.shop
+	times.shop = oldTime;
+	if (player.shopItems == undefined || player.shopItems.length == 0) {
+		player.showShop();
+	}
+	if (newTime - oldTime > 600000) {
+		times.shopM = 0;
+		times.shopS = 0;
 
-		} else {
-			let time = (600000 - (newTime - oldTime)) / 1000
-			times.shopM = Math.floor(time / 60);
-			times.shopS = Math.floor(time - times.shopM * 60);
-		}
-		oldTime = serverTimes.arena;
-		if (newTime - oldTime > 600000) {
-			times.arenaS = 0;
-			times.arenaM = 0;
+	} else {
+		let time = (600000 - (newTime - oldTime)) / 1000
+		times.shopM = Math.floor(time / 60);
+		times.shopS = Math.floor(time - times.shopM * 60);
+	}
+	oldTime = serverTimes.arena;
+	times.arena = oldTime;
+	if (newTime - oldTime > 600000) {
+		times.arenaS = 0;
+		times.arenaM = 0;
 
-		} else {
-			let time = (600000 - (newTime - oldTime)) / 1000
-			times.arenaM = Math.floor(time / 60);
-			times.arenaS = Math.floor(time - times.arenaM * 60);
-		}
-		oldTime = serverTimes.quest;
-		if (newTime - oldTime > player.onQuest) {
-			times.questS = 0;
-			times.questM = 0;
-
-		} else {
-			let time = (player.onQuest - (newTime - oldTime)) / 1000
-			times.questM = Math.floor(time / 60);
-			times.questS = Math.floor(time - times.questM * 60);
-		}
-		if (times.questM == 0 && times.questS == 0 && player.onQuest) {
-			screenButtons.questBtn.removeClass();
-			screenButtons.questBtn.addClass("btn");
-			screenButtons.questBtn.addClass("btn-success");
-		} else {
-			screenButtons.questBtn.addClass("btn");
-			screenButtons.questBtn.addClass("btn-dark");
-		}
-
-	});
+	} else {
+		let time = (600000 - (newTime - oldTime)) / 1000
+		times.arenaM = Math.floor(time / 60);
+		times.arenaS = Math.floor(time - times.arenaM * 60);
+	}
+	oldTime = serverTimes.quest;
+	times.quest = oldTime;
+	if (newTime - oldTime > player.onQuest) {
+		times.questS = 0;
+		times.questM = 0;
+	} else {
+		let time = (player.onQuest - (newTime - oldTime)) / 1000
+		times.questM = Math.floor(time / 60);
+		times.questS = Math.floor(time - times.questM * 60);
+	}
+	if (times.questM == 0 && times.questS == 0 && player.onQuest) {
+		screenButtons.questBtn.removeClass();
+		screenButtons.questBtn.addClass("btn");
+		screenButtons.questBtn.addClass("btn-success");
+	} else {
+		screenButtons.questBtn.addClass("btn");
+		screenButtons.questBtn.addClass("btn-dark");
+	}
 }
 
 //takes a programming string and replace it with actual word

@@ -9,7 +9,6 @@ function redirectToShop() {
   $("#screen").append(parent);
   $("#shopItem").append($("<div class='col-lg-6' id='itemStats' style='position: absolute;  height: 560px; width: 560px;margin-left:-80px '> </div>"));
   $("#shopItem").append($("<div class='col-lg-6' id='itemImg' style='position: absolute;  height: 560px; width: 560px; margin-left: 635px;'><img id='itemImagePNG' width='560' height='560' style='margin-left:-15px'></div>"));
-
   changeSelItem();
   backwardSBtn();
   reloadShopBtn();

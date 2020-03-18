@@ -56,45 +56,64 @@ class Player {
   //-------------------------------------------------------------------------------------
   //                                  SHOP
   showShop() {
-    firebase.database().ref("users/" + this.name + "/times/shop").on("value", (data) => {
-      let oldDate = data.val();
-      let newDate = Date.parse(new Date());
-      if (newDate - oldDate > 600000) {
-        this.shopItems = [];
-        let shoppingWeapons = [];
-        for (let part in weapons) {
-          for (let item in weapons[part]) {
-            if (weapons[part][item].name != "Nothing" && part != "Monsters" && part != "Quests" && part != "Npcs") {
-              if (!this.backpackContains(weapons[part][item]) && !this.playerContains(weapons[part][item])) {
-                shoppingWeapons.push(weapons[part][item]);
-              }
+    let oldDate = times.shop;
+    let newDate = Date.parse(new Date());
+    if (newDate - oldDate > 600000) {
+      this.shopItems = [];
+      let shoppingWeapons = [];
+      for (let part in weapons) {
+        for (let item in weapons[part]) {
+          if (weapons[part][item].name != "Nothing" && part != "Monsters" && part != "Quests" && part != "Npcs") {
+            if (!this.backpackContains(weapons[part][item]) && !this.playerContains(weapons[part][item])) {
+              shoppingWeapons.push(weapons[part][item]);
             }
           }
         }
-        if (shoppingWeapons.length >= 3) {
-          for (let i = 0; i < 3; i++) {
-            let randomIndex = Math.floor(Math.random() * shoppingWeapons.length);
-            this.shopItems.push(shoppingWeapons[randomIndex]);
-            shoppingWeapons.splice(randomIndex, 1);
-          }
-        } else {
-          console.log("You cant buy anything in this moment :)");
-        }
-        this.updateShopItems();
-        this.times.shop = Date.parse(new Date());
-        firebase.database().ref("users/" + this.name + "/times/shop").set(this.times.shop);
-        if (selected == 0) {
-          selected = 1;
-        } else {
-          selected = 0;
-        }
-        changeSelItem();
       }
-    });
+      if (shoppingWeapons.length >= 3) {
+        for (let i = 0; i < 3; i++) {
+          let randomIndex = Math.floor(Math.random() * shoppingWeapons.length);
+          this.shopItems.push(shoppingWeapons[randomIndex]);
+          shoppingWeapons.splice(randomIndex, 1);
+        }
+      } else {
+        console.log("You cant buy anything in this moment :)");
+      }
+      this.updateShopItems();
+      this.times.shop = Date.parse(new Date());
+      //
+      fetch("/shopRefresh", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "id": player.password,
+          "time": this.times.shop,
+        })
+      });
+      //firebase.database().ref("users/" + this.name + "/times/shop").set(this.times.shop);
+      if (selected == 0) {
+        selected = 1;
+      } else {
+        selected = 0;
+      }
+      changeSelItem();
+    }
   }
 
   updateShopItems() {
-    firebase.database().ref("users/" + this.name + "/shopItems").set(this.shopItems);
+    fetch("/shopItemsUpdate", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "id": player.password,
+        "items": this.shopItems,
+      })
+    });
+    //firebase.database().ref("users/" + this.name + "/shopItems").set(this.shopItems);
   }
 
   buyFromShop(index) {
@@ -162,18 +181,27 @@ class Player {
   //-------------------------------------------------------------------------------------
   saveState() {
     this.lvlUp();
-    firebase.database().ref("users/" + this.name + "/questAvailable").set(this.questAvailable);
-    firebase.database().ref("users/" + this.name + "/onQuest").set(this.onQuest);
-    firebase.database().ref("users/" + this.name + "/upgradeCharacter").set(this.upgradeCharacter);
-    firebase.database().ref("users/" + this.name + "/gold").set(parseInt(this.gold));
-    firebase.database().ref("users/" + this.name + "/character").set(this.character);
-    firebase.database().ref("users/" + this.name + "/messages").set(this.messages);
-    firebase.database().ref("users/" + this.name + "/lvl").set(this.lvl);
-    firebase.database().ref("users/" + this.name + "/xp").set(this.xp);
-    firebase.database().ref("users/" + this.name + "/bossLvl").set(this.bossLvl);
-    firebase.database().ref("users/" + this.name + "/fame").set(this.fame);
-    firebase.database().ref("users/" + this.name + "/slots").set(this.slots);
-    firebase.database().ref("users/" + this.name + "/backpack").set(this.backpack);
+    fetch("/saveState", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "id": this.password,
+        "questAvailable": this.questAvailable,
+        "onQuest": this.onQuest,
+        "upgradeCharacter": this.upgradeCharacter,
+        "gold": parseInt(this.gold),
+        "character": this.character,
+        "messages": this.messages,
+        "lvl": this.lvl,
+        "xp": this.xp,
+        "bossLvl": this.bossLvl,
+        "fame": this.fame,
+        "slots": this.slots,
+        "backpack": this.backpack,
+      })
+    });
   }
 
   putOn(object) {
@@ -198,77 +226,95 @@ class Player {
   }
   //-------------------------------------------------------------------------------------
   //                                FIGHTING
-  fightInArena() {
-    firebase.database().ref("users/" + this.name + "/times/arena").on("value", (data) => {
-      let oldDate = data.val();
-      let newDate = Date.parse(new Date());
-      if (newDate - oldDate > 600000) {
-        function pickRandomEnemy(obj, me) {
-          delete obj[me];
-          let names = Object.keys(obj);
-          let other = Math.floor(Math.random() * names.length);
-          let index = names[other];
-          return obj[index];
-        }
-
-        firebase.database().ref("users").once("value").then((u) => {
-          let userObj = u.val();
-          let enemy = pickRandomEnemy(userObj, this.name);
-          this.attack(enemy).then((result) => {
-            if (result) {
-              this.gold += 10;
-              this.fame += 1;
-              this.xp += enemy.lvl * 5;
-              this.saveState();
-            } else {
-              console.log("you lost!!")
-              firebase.database().ref("users/" + enemy.name + "/gold").transaction((gold) => {
-                return gold += 10;
-              });
-              firebase.database().ref("users/" + enemy.name + "/fame").transaction((fame) => {
-                return fame += 1;
-              });
-            }
+  async fightInArena() {
+    let oldDate = times.arena;
+    let newDate = Date.parse(new Date());
+    if (newDate - oldDate > 600000) {
+      //firebase.database().ref("users").once("value").then((u) => {
+      //let userObj = u.val();
+      //let enemy = pickRandomEnemy(userObj, this.name);
+      const result = await fetch("/randomEnemyArena", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "id": this.password,
+        })
+      });
+      const enemy = await result.json();
+      this.attack(enemy).then((result) => {
+        if (result) {
+          this.gold += 10;
+          this.fame += 1;
+          this.xp += enemy.lvl * 5;
+          this.saveState();
+          console.log("you won!!")
+        } else {
+          console.log("you lost!!")
+          /*firebase.database().ref("users/" + enemy.name + "/gold").transaction((gold) => {
+            return gold += 10;
           });
-        });
-        this.times.arena = Date.parse(new Date());
-        this.saveState();
-        firebase.database().ref("users/" + this.name + "/times/arena").set(this.times.arena);
-      }
-    });
+          firebase.database().ref("users/" + enemy.name + "/fame").transaction((fame) => {
+            return fame += 1;
+          });
+          */
+        }
+      });
+      //  });
+      this.times.arena = Date.parse(new Date());
+      this.saveState();
+      fetch("/arenaTime", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "id": player.password,
+          "time": this.times.arena,
+        })
+      });
+    }
   }
 
   fightNext() {
-    firebase.database().ref("users/" + this.name + "/times/monsters").on("value", (data) => {
-      let oldDate = data.val();
-      let thisDate = Date.parse(new Date());
-      if (thisDate - oldDate > 600000 * 6) {
-        if (this.bossLvl >= enemies.length) {
-          console.log("No enemies left");
-        } else {
-          this.attack(enemies[this.bossLvl]).then((result) => {
-            if (result) {
-              let drop = enemies[this.bossLvl].reward;
-              let slot;
-              for (let part in weapons) {
-                if (weapons[part][drop]) {
-                  slot = part;
-                }
+    let oldDate = times.monster;
+    let thisDate = Date.parse(new Date());
+    if (thisDate - oldDate > 600000 * 6) {
+      if (this.bossLvl >= enemies.length) {
+        console.log("No enemies left");
+      } else {
+        this.attack(enemies[this.bossLvl]).then((result) => {
+          if (result) {
+            let drop = enemies[this.bossLvl].reward;
+            let slot;
+            for (let part in weapons) {
+              if (weapons[part][drop]) {
+                slot = part;
               }
-              this.backpack.push(weapons[slot][drop]);
-              console.log("You won " + enemies[this.bossLvl].reward);
-              console.log("You won " + parseInt(enemies[this.bossLvl].gold) + " gold");
-              this.gold += parseInt(enemies[this.bossLvl].gold);
-              this.xp += this.bossLvl * 10;
-              this.bossLvl++;
-              this.saveState();
             }
-          });
-          this.times.monsters = Date.parse(new Date());
-          firebase.database().ref("users/" + this.name + "/times/monsters").set(this.times.monsters);
-        }
+            this.backpack.push(weapons[slot][drop]);
+            console.log("You won " + enemies[this.bossLvl].reward);
+            console.log("You won " + parseInt(enemies[this.bossLvl].gold) + " gold");
+            this.gold += parseInt(enemies[this.bossLvl].gold);
+            this.xp += this.bossLvl * 10;
+            this.bossLvl++;
+            this.saveState();
+          }
+        });
+        this.times.monsters = Date.parse(new Date());
+        fetch("/monsterTime", {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            "id": this.password,
+            "time": this.times.monsters,
+          })
+        });
       }
-    });
+    }
   }
 
   attack(others) {

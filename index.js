@@ -12,6 +12,7 @@ app.use(express.json({
 const _ = JSON.parse(fs.readFileSync("firebasedatabase.json"))
 let db = _;
 const weapons = JSON.parse(fs.readFileSync("public/weapons.json"))
+
 app.post("/login", (request, response) => {
     let found = false;
     console.log("New loging request!")
@@ -75,6 +76,207 @@ app.post("/signup", (request, response) => {
         response.json("undefined");
     }
 })
+
+app.post("/times", (request, response) => {
+    let found = false;
+    //console.log("New times update!");
+    //console.log("Id is:" + request.body.id);
+    for (let user in db) {
+        if (db[user].password == request.body.id) {
+            response.json(db[user].times);
+            // console.log("It was: " + user);
+            found = true;
+        }
+    }
+    if (!found) {
+        response.json("undefined");
+    }
+})
+
+app.post("/shopRefresh", (request, response) => {
+    let found = false;
+    console.log("New shopTime update!");
+    console.log("Id is:" + request.body.id);
+    for (let user in db) {
+        if (db[user].password == request.body.id) {
+            found = true;
+            console.log("It was: " + user);
+            db[user].times.shop = request.body.time;
+            stringedDb = JSON.stringify(db);
+            fs.writeFile('firebasedatabase.json', stringedDb, 'utf8', () => {
+                console.log("Successfully saved up!");
+            });
+            response.end();
+        }
+    }
+    if (!found) {
+        response.json("undefined");
+    }
+})
+
+app.post("/shopItemsUpdate", (request, response) => {
+    let found = false;
+    console.log("New shop items update!");
+    console.log("Id is:" + request.body.id);
+    for (let user in db) {
+        if (db[user].password == request.body.id) {
+            found = true;
+            console.log("It was: " + user);
+            db[user].shopItems = request.body.items;
+            stringedDb = JSON.stringify(db);
+            fs.writeFile('firebasedatabase.json', stringedDb, 'utf8', () => {
+                console.log("Successfully saved up!");
+            });
+            response.end();
+        }
+    }
+    if (!found) {
+        response.json("undefined");
+    }
+})
+
+app.post("/arenaTime", (request, response) => {
+    let found = false;
+    console.log("New arena time update!");
+    console.log("Id is:" + request.body.id);
+    for (let user in db) {
+        if (db[user].password == request.body.id) {
+            found = true;
+            console.log("It was: " + user);
+            db[user].times.arena = request.body.time;
+            stringedDb = JSON.stringify(db);
+            fs.writeFile('firebasedatabase.json', stringedDb, 'utf8', () => {
+                console.log("Successfully saved up!");
+            });
+            response.end();
+        }
+    }
+    if (!found) {
+        response.end();
+    }
+})
+
+app.post("/monsterTime", (request, response) => {
+    let found = false;
+    console.log("New monster time update!");
+    console.log("Id is:" + request.body.id);
+    for (let user in db) {
+        if (db[user].password == request.body.id) {
+            found = true;
+            console.log("It was: " + user);
+            db[user].times.monsters = request.body.time;
+            stringedDb = JSON.stringify(db);
+            fs.writeFile('firebasedatabase.json', stringedDb, 'utf8', () => {
+                console.log("Successfully saved up!");
+            });
+            response.end();
+        }
+    }
+    if (!found) {
+        response.end();
+    }
+})
+
+app.post("/questTime", (request, response) => {
+    let found = false;
+    console.log("New quest time update!");
+    console.log("Id is:" + request.body.id);
+    for (let user in db) {
+        if (db[user].password == request.body.id) {
+            found = true;
+            console.log("It was: " + user);
+            db[user].times.quest = request.body.time;
+            stringedDb = JSON.stringify(db);
+            fs.writeFile('firebasedatabase.json', stringedDb, 'utf8', () => {
+                console.log("Successfully saved up!");
+            });
+            response.end();
+        }
+    }
+    if (!found) {
+        response.end();
+    }
+})
+
+app.post("/saveState", (request, response) => {
+    let found = false;
+    console.log("New state update!");
+    console.log("Id is:" + request.body.id);
+    stringedDb = JSON.stringify(db);
+    fs.writeFile('firebasedatabase.json', stringedDb, 'utf8', () => {
+        console.log("Successfully saved up!");
+    });
+    for (let user in db) {
+        if (db[user].password == request.body.id) {
+            found = true;
+            console.log("It was: " + user);
+            db[user].questAvailable = request.body.questAvailable;
+            db[user].onQuest = request.body.onQuest;
+            db[user].upgradeCharacter = request.body.upgradeCharacter;
+            db[user].gold = request.body.gold;
+            db[user].character = request.body.character;
+            db[user].messages = request.body.messages;
+            db[user].lvl = request.body.lvl;
+            db[user].xp = request.body.xp;
+            db[user].bossLvl = request.body.bossLvl;
+            db[user].fame = request.body.fame;
+            db[user].slots = request.body.slots;
+            db[user].backpack = request.body.backpack;
+            response.end();
+        }
+    }
+    if (!found) {
+        response.end();
+    }
+})
+
+app.post("/questVerification", (request, response) => {
+    let found = false;
+    console.log("New quest verification time update!");
+    console.log("Id is:" + request.body.id);
+    for (let user in db) {
+        if (db[user].password == request.body.id) {
+            found = true;
+            console.log("It was: " + user);
+            response.json(db[user].times.quest);
+        }
+    }
+    if (!found) {
+        response.end();
+    }
+})
+
+app.post("/randomEnemyArena", (request, response) => {
+    let found = false;
+    console.log("New arena time update!");
+    console.log("Id is:" + request.body.id);
+    for (let user in db) {
+        if (db[user].password == request.body.id) {
+            found = true;
+            console.log("It was: " + user);
+            let users = db;
+            const enemy = pickRandomEnemy(users, user)
+            response.json(enemy);
+        }
+    }
+
+
+    if (!found) {
+        response.end();
+    }
+
+    function pickRandomEnemy(obj, me) {
+        //delete obj[me];
+        let names = Object.keys(obj);
+        let other = Math.floor(Math.random() * names.length);
+        let index = names[other];
+        if (obj[index] == me) {
+            pickRandomEnemy(db, me)
+        }
+        return obj[index];
+    }
+})
+
 
 let baseCharacter = {
     hp: 150,

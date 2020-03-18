@@ -44,7 +44,7 @@
     <script>
         async function onSignIn(googleUser) {
             let profile = googleUser.getBasicProfile();
-            let Id = profile.getId();
+            const Id = profile.getId();
             if (Id) {
                 const options = {
                     method: "POST",
@@ -80,9 +80,6 @@
                     }
                 } else {
                     player = new Player(_);
-                    if (player.shopItems == undefined) {
-                        showShop();
-                    }
                     updateTimes("load");
                 }
             }
