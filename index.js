@@ -1,6 +1,6 @@
 const express = require("express")
 const fs = require("fs");
-const app = express();
+const app = express()
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
     console.log("listening at port 5000");
@@ -9,9 +9,10 @@ app.use(express.static("public"));
 app.use(express.json({
     limit: "1mb"
 }));
-const _ = JSON.parse(fs.readFileSync("database.json"));
+let stringedDb;
+const _ = JSON.parse(fs.readFileSync("firebasedatabase.json"))
 let db = _;
-const weapons = JSON.parse(fs.readFileSync("public/weapons.json"));
+const weapons = JSON.parse(fs.readFileSync("public/weapons.json"))
 
 app.post("/login", (request, response) => {
     let found = false;
@@ -65,6 +66,10 @@ app.post("/signup", (request, response) => {
         const password = request.body.id;
         const newP = new newPlayer(name, password);
         db[name] = newP
+        stringedDb = JSON.stringify(db);
+        fs.writeFile('firebasedatabase.json', stringedDb, 'utf8', () => {
+            console.log("Successfully signed up!");
+        });
         response.json(db[name]);
     }
     if (failed) {
@@ -98,6 +103,10 @@ app.post("/shopRefresh", (request, response) => {
             found = true;
             console.log("It was: " + user);
             db[user].times.shop = request.body.time;
+            stringedDb = JSON.stringify(db);
+            fs.writeFile('firebasedatabase.json', stringedDb, 'utf8', () => {
+                console.log("Successfully saved up!");
+            });
             response.end();
         }
     }
@@ -115,6 +124,10 @@ app.post("/shopItemsUpdate", (request, response) => {
             found = true;
             console.log("It was: " + user);
             db[user].shopItems = request.body.items;
+            stringedDb = JSON.stringify(db);
+            fs.writeFile('firebasedatabase.json', stringedDb, 'utf8', () => {
+                console.log("Successfully saved up!");
+            });
             response.end();
         }
     }
@@ -132,6 +145,10 @@ app.post("/arenaTime", (request, response) => {
             found = true;
             console.log("It was: " + user);
             db[user].times.arena = request.body.time;
+            stringedDb = JSON.stringify(db);
+            fs.writeFile('firebasedatabase.json', stringedDb, 'utf8', () => {
+                console.log("Successfully saved up!");
+            });
             response.end();
         }
     }
@@ -149,6 +166,10 @@ app.post("/monsterTime", (request, response) => {
             found = true;
             console.log("It was: " + user);
             db[user].times.monsters = request.body.time;
+            stringedDb = JSON.stringify(db);
+            fs.writeFile('firebasedatabase.json', stringedDb, 'utf8', () => {
+                console.log("Successfully saved up!");
+            });
             response.end();
         }
     }
@@ -166,6 +187,10 @@ app.post("/questTime", (request, response) => {
             found = true;
             console.log("It was: " + user);
             db[user].times.quest = request.body.time;
+            stringedDb = JSON.stringify(db);
+            fs.writeFile('firebasedatabase.json', stringedDb, 'utf8', () => {
+                console.log("Successfully saved up!");
+            });
             response.end();
         }
     }
@@ -178,6 +203,10 @@ app.post("/saveState", (request, response) => {
     let found = false;
     console.log("New state update!");
     console.log("Id is:" + request.body.id);
+    stringedDb = JSON.stringify(db);
+    fs.writeFile('firebasedatabase.json', stringedDb, 'utf8', () => {
+        console.log("Successfully saved up!");
+    });
     for (let user in db) {
         if (db[user].password == request.body.id) {
             found = true;
@@ -248,14 +277,6 @@ app.post("/randomEnemyArena", (request, response) => {
         return obj[index];
     }
 })
-
-
-function saveDatabase() {
-    stringedDb = JSON.stringify(db);
-    fs.writeFile('database.json', stringedDb, 'utf8', () => {
-        console.log("Successfully signed up!");
-    });
-}
 
 
 let baseCharacter = {
