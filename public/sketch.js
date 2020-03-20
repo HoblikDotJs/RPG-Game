@@ -172,7 +172,8 @@ async function showQuests() {
 			}
 			$("#questDescription").append($("<div class='row'><div class='col-lg-12'><button class='btn btn-dark'>GO</button></div></div>").click(() => {
 				player.onQuest = quests[selected].time;
-				console.log(player.onQuest)
+				player.questAvailable[selected].sel = true;
+				player.saveState();
 				fetch("/questTime", {
 					method: "POST",
 					headers: {
@@ -183,8 +184,6 @@ async function showQuests() {
 						"time": Date.parse(new Date()),
 					})
 				});
-				player.questAvailable[selected].sel = true;
-				player.saveState();
 				showQuests();
 			}));
 		}

@@ -333,17 +333,17 @@ class Player {
       attackButtonCreate();
       regenButtonCreate();
       spellButtonCreate();
-      roundTimeBarCreate();
       myHpBarCreate();
+      roundTimeBarCreate();
       enemyHpBarCreate();
 
       function myHpBarCreate() {
-        let _ = $('<div class="progress" style="width:300px; height:30px; margin: auto;margin-top:15px;"> <div class="progress-bar" id="myHpB" style="width:100%;  background-color: DarkSeaGreen; aria-valuemin ="0";aria-valuemax="100""></div></div>');
+        let _ = $('<div class="progress" id="myHpText" style="width:300px; height:30px; margin: auto;margin-top:15px;"> <div class="progress-bar" id="myHpB" style="width:100%;  background-color: DarkSeaGreen; aria-valuemin ="0";aria-valuemax="100""></div></div>');
         $("#screen").append(_)
       }
 
       function enemyHpBarCreate() {
-        let _ = $('<div class="progress" style="width:300px; height:30px; margin: auto;margin-top:15px;"> <div class="progress-bar" id="enemyHpB" style="width:100%; background-color: Crimson; aria-valuemin ="0";aria-valuemax="100""></div></div>');
+        let _ = $('<div class="progress" id="EnemyHpText" style="width:300px; height:30px; margin: auto;margin-top:15px;"> <div class="progress-bar" id="enemyHpB" style="width:100%; background-color: Crimson; aria-valuemin ="0";aria-valuemax="100""></div></div>');
         $("#screen").append(_)
       }
 
@@ -432,11 +432,13 @@ class Player {
       }
 
       function enemyHit() {
+        let roundDmg;
         if (!END) {
           let r = Math.random() * 100;
           let luck = enemy.character.luck;
           if (r < luck / 10) { //CRIT
             let dmg = Math.floor((parseInt(enemy.character.damage) - parseInt(me.character.armor) / 2) * (r / 100 + 1));
+            roundDmg = dmg;
             enemyHp += parseInt(enemy.character.regen)
             if (dmg > 0) {
               myHp -= dmg;
@@ -449,20 +451,23 @@ class Player {
           } else if (r < luck) { //NORMAL
             if (parseInt(enemy.character.damage) - parseInt(me.character.armor) / 2 > 0) {
               myHp -= parseInt(enemy.character.damage) - parseInt(me.character.armor) / 2;
+              roundDmg = parseInt(enemy.character.damage) - parseInt(me.character.armor) / 2;
               console.log("ENEMY ATTACK DMG: " + (parseInt(enemy.character.damage) - parseInt(me.character.armor) / 2));
             } else {
               console.log("ENEMY DMG: " + parseInt(enemy.character.damage), "Your EfA: " + parseInt(me.character.armor) / 2)
             }
-          } else { //MISS
+          } else { //
+            roundDmg = "Missed";
             console.log("ENEMY MISSED");
           }
           fight_round += 1;
           console.log("your HP: " + myHp, "enemy HP:" + enemyHp, "round :" + fight_round);
         }
         let enemyRemainingHp = (enemyHp / enemy.character.hp) * 100
-        $("#enemyHpB").css("width", enemyRemainingHp + "%")
+        $("#enemyHpB").css("width", enemyRemainingHp + "%");
         let myRemainingHp = (myHp / me.character.hp) * 100
-        $("#myHpB").css("width", myRemainingHp + "%")
+        $("#myHpB").css("width", myRemainingHp + "%");
+        // $("#myHpText").text("<b><p style='color:black;font-size:25px '>" + roundDmg + "</p></b>");
       }
 
       function checkIfDead() {
@@ -544,84 +549,3 @@ class Player {
     return false
   }
 }
-
-/* 
- let br = "-------------------------------------------";
-    let round = 0;
-    this.recFight = [];
-    let yourHp = this.character.hp;
-    let othersHp = others.character.hp;
-    console.log(this.name + " attacked " + others.name);
-    this.recFight.push(this.name + " attacked " + others.name);
-    console.log(br);
-    this.recFight.push(br);
-    while (othersHp > 0 && yourHp > 0) {
-      round++;
-      if (round == 100) {
-        this.recFight.push("It is a draw");
-        console.log("It is a draw");
-        return false
-      }
-      if ((Math.random() * 100) < this.character.luck / (Math.random() * 20)) {
-        console.log(this.name + " regenerated " + this.character.regen + " hp");
-        this.recFight.push(this.name + " regenerated " + this.character.regen + " hp");
-        this.character.hp += this.character.regen;
-        let critMul = Math.random() * 10;
-        othersHp -= (this.character.damage - others.character.armor / 2) * critMul;
-        console.log(this.name + " crit " + Math.floor((this.character.damage - others.character.armor / 2) * critMul) + " damage.");
-        this.recFight.push(this.name + " crit " + Math.floor((this.character.damage - others.character.armor / 2) * critMul) + " damage.");
-        if (othersHp <= 0) {
-          console.log(this.name + " won!");
-          this.recFight.push(this.name + " won!");
-          console.log(br);
-          this.recFight.push(br);
-          return true
-        }
-      } else if ((Math.random() * 100) < this.character.luck) { // luck means how many % will he hit
-        othersHp -= this.character.damage - others.character.armor / 2;
-        console.log(this.name + " did " + (this.character.damage - others.character.armor / 2) + " damage.");
-        this.recFight.push(this.name + " did " + (this.character.damage - others.character.armor / 2) + " damage.");
-        if (othersHp <= 0) {
-          console.log(this.name + " won!");
-          this.recFight.push(this.name + " won!");
-          console.log(br);
-          this.recFight.push(br);
-          return true
-        }
-      } else {
-        console.log(this.name + " missed");
-        this.recFight.push(this.name + " missed");
-      }
-      /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      if ((Math.random() * 100) < others.character.luck / (Math.random() * 20)) {
-        others.character.hp += others.character.regen;
-        console.log(others.name + " regenerated " + others.character.regen + " hp");
-        this.recFight.push(others.name + " regenerated " + others.character.regen + " hp");
-        let critMul = Math.random() * 10;
-        yourHp -= (others.character.damage - this.character.armor / 2) * critMul;
-        console.log(others.name + " crit " + Math.floor((others.character.damage - this.character.armor / 2) * critMul) + " damage.")
-        this.recFight.push(others.name + " crit " + Math.floor((others.character.damage - this.character.armor / 2) * critMul) + " damage.")
-        if (yourHp <= 0) {
-          console.log(others.name + " won!");
-          this.recFight.push(others.name + " won!");
-          console.log(br);
-          this.recFight.push(br);
-          return false
-        }
-      } else if ((Math.random() * 100) < others.character.luck) {
-        yourHp -= others.character.damage - this.character.armor / 2;
-        console.log(others.name + " did " + (others.character.damage - this.character.armor / 2) + " damage.");
-        this.recFight.push(others.name + " did " + (others.character.damage - this.character.armor / 2) + " damage.");
-        if (yourHp <= 0) {
-          console.log(others.name + " won!");
-          this.recFight.push(others.name + " won!");
-          console.log(br);
-          this.recFight.push(br);
-          return false
-        }
-      } else {
-        console.log(others.name + " missed"); //
-        this.recFight.push(others.name + " missed");
-      }
-    }
-*/
