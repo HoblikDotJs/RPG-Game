@@ -35,7 +35,7 @@ class Player {
     this.character = {
       hp: 150,
       damage: 20,
-      armor: 10, // heal
+      armor: 10,
       luck: 50,
       weight: 70,
       regen: 1,
@@ -58,7 +58,7 @@ class Player {
   showShop() {
     let oldDate = times.shop;
     let newDate = Date.parse(new Date());
-    if (newDate - oldDate > 600000) {
+    if (newDate - oldDate > 600000) { // 10min
       this.shopItems = [];
       let shoppingWeapons = [];
       for (let part in weapons) {
@@ -81,18 +81,16 @@ class Player {
       }
       this.updateShopItems();
       this.times.shop = Date.parse(new Date());
-      //
       fetch("/shopRefresh", {
         method: "POST",
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          "id": player.password,
+          "id": this.password,
           "time": this.times.shop,
         })
       });
-      //firebase.database().ref("users/" + this.name + "/times/shop").set(this.times.shop);
       if (selected == 0) {
         selected = 1;
       } else {
@@ -113,37 +111,33 @@ class Player {
         "items": this.shopItems,
       })
     });
-    //firebase.database().ref("users/" + this.name + "/shopItems").set(this.shopItems);
   }
 
-  buyFromShop(index) {
+  async buyFromShop(index) {
     let item = this.shopItems[index];
     if (item.sold == true) {
       // idk
     } else {
       if (parseInt(this.gold) >= parseInt(item.price)) {
-        this.gold -= parseInt(item.price);
-        this.backpack.push(item);
-        this.shopItems[index].sold = true;
-        this.updateShopItems();
-        this.saveState();
-        changeSelItem();
-      }
-    }
-  }
-
-  updateStats(stat) {
-    for (let i = 0; i < Object.keys(this.upgradeCharacter).length; i++) {
-      if (Object.keys(this.upgradeCharacter)[i] == stat) {
-        let price = this.upgradeCharacter[stat] * 5;
-        let ans = prompt("Do you really want to update " + stat + " for " + price + " gold y/n");
-        if (ans == "y" && parseInt(this.gold) >= price) {
-          console.log("Updating " + stat);
-          this.upgradeCharacter[stat] += 2;
-          this.gold -= parseInt(price);
+        const response = await fetch("/shopBuy", {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            "id": this.password,
+            "price": item.price,
+          })
+        });
+        const result = await response.json();
+        console.log(result)
+        if (result == "True") {
+          this.gold -= parseInt(item.price);
+          this.backpack.push(item);
+          this.shopItems[index].sold = true;
+          this.updateShopItems();
           this.saveState();
-        } else {
-          console.log("Not enough gold");
+          changeSelItem();
         }
       }
     }
@@ -215,6 +209,23 @@ class Player {
       console.log(this.character);
       console.log(this.slots);
       this.saveState();
+    }
+  }
+
+  updateStats(stat) {
+    for (let i = 0; i < Object.keys(this.upgradeCharacter).length; i++) {
+      if (Object.keys(this.upgradeCharacter)[i] == stat) {
+        let price = this.upgradeCharacter[stat] * 5;
+        let ans = prompt("Do you really want to update " + stat + " for " + price + " gold y/n");
+        if (ans == "y" && parseInt(this.gold) >= price) {
+          console.log("Updating " + stat);
+          this.upgradeCharacter[stat] += 2;
+          this.gold -= parseInt(price);
+          this.saveState();
+        } else {
+          console.log("Not enough gold");
+        }
+      }
     }
   }
 
@@ -467,7 +478,8 @@ class Player {
         $("#enemyHpB").css("width", enemyRemainingHp + "%");
         let myRemainingHp = (myHp / me.character.hp) * 100
         $("#myHpB").css("width", myRemainingHp + "%");
-        // $("#myHpText").text("<b><p style='color:black;font-size:25px '>" + roundDmg + "</p></b>");
+        $("#myHpB").html("<b><p style='color:black;font-size:25px '>" + myHp + "</p></b>");
+        $("#enemyHpB").html("<b><p style='color:black;font-size:25px '>" + enemyHp + "</p></b>");
       }
 
       function checkIfDead() {
@@ -511,6 +523,7 @@ class Player {
             timeOnBar++;
             let w = 100 - ((timeOnBar / ((delay / 1000) - 1)) * 100)
             $("#roundTimeBar").css("width", w + "%");
+            $("#roundTimeBar").html("<b><p style='color:black;font-size:25px'>" + (5 - (timeOnBar + 1)) + "</p></b>");
           }, 1000);
           timeOut = setTimeout(() => {
             attackBtn.trigger("click");

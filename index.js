@@ -10,7 +10,7 @@ app.use(express.json({
     limit: "1mb"
 }));
 let stringedDb;
-const _ = JSON.parse(fs.readFileSync("firebasedatabase.json"))
+const _ = JSON.parse(fs.readFileSync("database.json"))
 let db = _;
 const weapons = JSON.parse(fs.readFileSync("public/weapons.json"))
 
@@ -67,7 +67,7 @@ app.post("/signup", (request, response) => {
         const newP = new newPlayer(name, password);
         db[name] = newP
         stringedDb = JSON.stringify(db);
-        fs.writeFile('firebasedatabase.json', stringedDb, 'utf8', () => {
+        fs.writeFile('database.json', stringedDb, 'utf8', () => {
             console.log("Successfully signed up!");
         });
         response.json(db[name]);
@@ -104,7 +104,7 @@ app.post("/shopRefresh", (request, response) => {
             console.log("It was: " + user);
             db[user].times.shop = request.body.time;
             stringedDb = JSON.stringify(db);
-            fs.writeFile('firebasedatabase.json', stringedDb, 'utf8', () => {
+            fs.writeFile('database.json', stringedDb, 'utf8', () => {
                 console.log("Successfully saved up!");
             });
             response.end();
@@ -114,6 +114,26 @@ app.post("/shopRefresh", (request, response) => {
         response.json("undefined");
     }
 })
+
+app.post("/shopBuy", (request, response) => {
+    let found = false;
+    console.log("New Buy!");
+    console.log("Id is:" + request.body.id);
+    for (let user in db) {
+        if (db[user].password == request.body.id) {
+            found = true;
+            console.log("It was: " + user);
+            if (parseInt(db[user].gold) >= parseInt(request.body.price)) {
+                response.json("True");
+            };
+            response.json("False");
+        }
+    }
+    if (!found) {
+        response.json("False");
+    }
+})
+
 
 app.post("/shopItemsUpdate", (request, response) => {
     let found = false;
@@ -125,7 +145,7 @@ app.post("/shopItemsUpdate", (request, response) => {
             console.log("It was: " + user);
             db[user].shopItems = request.body.items;
             stringedDb = JSON.stringify(db);
-            fs.writeFile('firebasedatabase.json', stringedDb, 'utf8', () => {
+            fs.writeFile('database.json', stringedDb, 'utf8', () => {
                 console.log("Successfully saved up!");
             });
             response.end();
@@ -146,7 +166,7 @@ app.post("/arenaTime", (request, response) => {
             console.log("It was: " + user);
             db[user].times.arena = request.body.time;
             stringedDb = JSON.stringify(db);
-            fs.writeFile('firebasedatabase.json', stringedDb, 'utf8', () => {
+            fs.writeFile('database.json', stringedDb, 'utf8', () => {
                 console.log("Successfully saved up!");
             });
             response.end();
@@ -167,7 +187,7 @@ app.post("/monsterTime", (request, response) => {
             console.log("It was: " + user);
             db[user].times.monsters = request.body.time;
             stringedDb = JSON.stringify(db);
-            fs.writeFile('firebasedatabase.json', stringedDb, 'utf8', () => {
+            fs.writeFile('database.json', stringedDb, 'utf8', () => {
                 console.log("Successfully saved up!");
             });
             response.end();
@@ -188,7 +208,7 @@ app.post("/questTime", (request, response) => {
             console.log("It was: " + user);
             db[user].times.quest = request.body.time;
             stringedDb = JSON.stringify(db);
-            fs.writeFile('firebasedatabase.json', stringedDb, 'utf8', () => {
+            fs.writeFile('database.json', stringedDb, 'utf8', () => {
                 console.log("Successfully saved up!");
             });
             response.end();
@@ -204,7 +224,7 @@ app.post("/saveState", (request, response) => {
     console.log("New state update!");
     console.log("Id is:" + request.body.id);
     stringedDb = JSON.stringify(db);
-    fs.writeFile('firebasedatabase.json', stringedDb, 'utf8', () => {
+    fs.writeFile('database.json', stringedDb, 'utf8', () => {
         console.log("Successfully saved up!");
     });
     for (let user in db) {
