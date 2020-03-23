@@ -66,9 +66,7 @@ function backwardIBtn() {
 
 function putOnButton() {
   screenButtons.putOnBtn = $("<button class='btn btn-dark' style='margin-top:510px; margin-left:90px;'>Equip</button>").appendTo("#invent");
-  screenButtons.putOnBtn.click(() => {
-    player.putOn(player.backpack[invSelected]);
-    changeInvItem();
-    showCharacter();
+  screenButtons.putOnBtn.click(async () => {
+    await player.putOn(player.backpack[invSelected]);
   })
 }

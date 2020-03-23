@@ -130,7 +130,6 @@ class Player {
           })
         });
         const result = await response.json();
-        console.log(result)
         if (result == "True") {
           this.gold -= parseInt(item.price);
           this.backpack.push(item);
@@ -154,12 +153,11 @@ class Player {
       } else {
         this.xp += this.lvl;
       }
+      this.questAvailable = randomQuests(3);
+      this.onQuest = 0;
+      this.saveState();
     })
-    this.questAvailable = randomQuests(3);
-    this.onQuest = 0;
-    this.saveState();
   }
-
   makeNpc() {
     let npcCharacter = this.character;
     for (let stat in npcCharacter) {
@@ -172,10 +170,11 @@ class Player {
   }
 
 
+
   //-------------------------------------------------------------------------------------
-  saveState() {
+  async saveState() {
     this.lvlUp();
-    fetch("/saveState", {
+    await fetch("/saveState", {
       method: "POST",
       headers: {
         'Content-Type': 'application/json'
@@ -196,10 +195,40 @@ class Player {
         "backpack": this.backpack,
       })
     });
+    return
   }
 
-  putOn(object) {
+  getState() {
+    return new Promise(async (resolve) => {
+      const response = await fetch("/getState", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "id": this.password,
+        })
+      });
+      const data = await response.json();
+      this.questAvailable = data.questAvailable;
+      this.onQuest = data.onQuest;
+      this.upgradeCharacter = data.upgradeCharacter;
+      this.gold = data.gold;
+      this.character = data.character;
+      this.messages = data.messages;
+      this.lvl = data.lvl;
+      this.xp = data.xp;
+      this.bossLvl = data.bossLvl;
+      this.fame = data.fame;
+      this.slots = data.slots;
+      this.backpack = data.backpack;
+      resolve(true);
+    })
+  }
+
+  async putOn(object) {
     if (this.backpack.indexOf(object) != -1 && object != undefined) {
+      await this.getState();
       let prevItem = this.slots[object.slot];
       this.slots[object.slot] = object;
       this.backpack.splice(this.backpack.indexOf(object), 1);
@@ -209,10 +238,13 @@ class Player {
       console.log(this.character);
       console.log(this.slots);
       this.saveState();
+      changeInvItem();
+      showCharacter();
     }
   }
 
-  updateStats(stat) {
+  async updateStats(stat) {
+    await this.getState();
     for (let i = 0; i < Object.keys(this.upgradeCharacter).length; i++) {
       if (Object.keys(this.upgradeCharacter)[i] == stat) {
         let price = this.upgradeCharacter[stat] * 5;
@@ -238,6 +270,8 @@ class Player {
   //-------------------------------------------------------------------------------------
   //                                FIGHTING
   async fightInArena() {
+    await this.getState();
+    console.log(this);
     let oldDate = times.arena;
     let newDate = Date.parse(new Date());
     if (newDate - oldDate > 600000) {
@@ -260,6 +294,7 @@ class Player {
           this.fame += 1;
           this.xp += enemy.lvl * 5;
           this.saveState();
+          console.log(this);
           console.log("you won!!")
         } else {
           console.log("you lost!!")
@@ -288,7 +323,8 @@ class Player {
     }
   }
 
-  fightNext() {
+  async fightNext() {
+    await this.getState();
     let oldDate = times.monster;
     let thisDate = Date.parse(new Date());
     if (thisDate - oldDate > 600000 * 6) {

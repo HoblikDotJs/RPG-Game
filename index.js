@@ -251,6 +251,40 @@ app.post("/saveState", (request, response) => {
     }
 })
 
+
+app.post("/getState", (request, response) => {
+    let found = false;
+    console.log("New get state update!");
+    console.log("Id is:" + request.body.id);
+    stringedDb = JSON.stringify(db);
+    fs.writeFile('database.json', stringedDb, 'utf8', () => {
+        console.log("Successfully saved up!");
+    });
+    for (let user in db) {
+        if (db[user].password == request.body.id) {
+            found = true;
+            console.log("It was: " + user);
+            let data = {};
+            data["questAvailable"] = db[user].questAvailable
+            data["onQuest"] = db[user].onQuest
+            data["upgradeCharacter"] = db[user].upgradeCharacter
+            data["gold"] = db[user].gold
+            data["character"] = db[user].character
+            data["message"] = db[user]
+            data["lvl"] = db[user].lvl
+            data["xp"] = db[user].xp
+            data["bossLvl"] = db[user].bossLvl
+            data["fame"] = db[user].fame
+            data["slots"] = db[user].slots
+            data["backpack"] = db[user].backpack
+            response.json(data);
+        }
+    }
+    if (!found) {
+        response.end();
+    }
+})
+
 app.post("/questVerification", (request, response) => {
     let found = false;
     console.log("New quest verification time update!");

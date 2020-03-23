@@ -122,7 +122,6 @@ function showBestPlayers() {
 
 // redirect to quests
 async function showQuests() {
-	player.saveState()
 	const response = await fetch("/questVerification", {
 		method: "POST",
 		headers: {
@@ -140,7 +139,9 @@ async function showQuests() {
 			changeBackground("images/blank.jpg");
 			for (let q in player.questAvailable) {
 				if (player.questAvailable[q].sel) {
+					//await player.getState();
 					player.doQuest(player.questAvailable[q]);
+					await player.saveState();
 				}
 			}
 		} else { // selecting a quest and quests are shown
@@ -149,6 +150,7 @@ async function showQuests() {
 			addBackButton();
 			let quests;
 			if (player.questAvailable.length != 3) {
+				await player.getState();
 				quests = randomQuests(3);
 				player.questAvailable = quests;
 				player.saveState();
@@ -170,7 +172,7 @@ async function showQuests() {
 					$("#questTime").html(quests[selected].time / 60000 + " min");
 				}));
 			}
-			$("#questDescription").append($("<div class='row'><div class='col-lg-12'><button class='btn btn-dark'>GO</button></div></div>").click(() => {
+			$("#questDescription").append($("<div class='row'><div class='col-lg-12'><button class='btn btn-dark'>GO</button></div></div>").click(async () => {
 				player.onQuest = quests[selected].time;
 				player.questAvailable[selected].sel = true;
 				player.saveState();
