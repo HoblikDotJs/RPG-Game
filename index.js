@@ -1,5 +1,18 @@
-const express = require("express")
-const fs = require("fs");
+var fs = require('fs');
+const admin = require("firebase-admin");
+var serviceAccount = JSON.parse(fs.readFileSync("serviceAccountKey.json"))
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://rpgsomegame.firebaseio.com"
+});
+let db;
+var database = admin.database();
+var ref = database.ref();
+ref.once("value", function (snapshot) {
+    db = snapshot.val();
+});
+
+const express = require("express");
 const app = express()
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
@@ -9,9 +22,6 @@ app.use(express.static("public"));
 app.use(express.json({
     limit: "1mb"
 }));
-let stringedDb;
-const _ = JSON.parse(fs.readFileSync("database.json"))
-let db = _;
 const weapons = JSON.parse(fs.readFileSync("public/weapons.json"))
 
 app.post("/login", (request, response) => {
@@ -66,10 +76,6 @@ app.post("/signup", (request, response) => {
         const password = request.body.id;
         const newP = new newPlayer(name, password);
         db[name] = newP
-        stringedDb = JSON.stringify(db);
-        fs.writeFile('database.json', stringedDb, 'utf8', () => {
-            console.log("Successfully signed up!");
-        });
         response.json(db[name]);
     }
     if (failed) {
@@ -103,10 +109,6 @@ app.post("/shopRefresh", (request, response) => {
             found = true;
             console.log("It was: " + user);
             db[user].times.shop = request.body.time;
-            stringedDb = JSON.stringify(db);
-            fs.writeFile('database.json', stringedDb, 'utf8', () => {
-                console.log("Successfully saved up!");
-            });
             response.end();
         }
     }
@@ -134,7 +136,6 @@ app.post("/shopBuy", (request, response) => {
     }
 })
 
-
 app.post("/shopItemsUpdate", (request, response) => {
     let found = false;
     console.log("New shop items update!");
@@ -144,10 +145,6 @@ app.post("/shopItemsUpdate", (request, response) => {
             found = true;
             console.log("It was: " + user);
             db[user].shopItems = request.body.items;
-            stringedDb = JSON.stringify(db);
-            fs.writeFile('database.json', stringedDb, 'utf8', () => {
-                console.log("Successfully saved up!");
-            });
             response.end();
         }
     }
@@ -165,10 +162,6 @@ app.post("/arenaTime", (request, response) => {
             found = true;
             console.log("It was: " + user);
             db[user].times.arena = request.body.time;
-            stringedDb = JSON.stringify(db);
-            fs.writeFile('database.json', stringedDb, 'utf8', () => {
-                console.log("Successfully saved up!");
-            });
             response.end();
         }
     }
@@ -186,10 +179,8 @@ app.post("/monsterTime", (request, response) => {
             found = true;
             console.log("It was: " + user);
             db[user].times.monsters = request.body.time;
-            stringedDb = JSON.stringify(db);
-            fs.writeFile('database.json', stringedDb, 'utf8', () => {
-                console.log("Successfully saved up!");
-            });
+            console.log("SAVING DB")
+            database.ref().set(db)
             response.end();
         }
     }
@@ -207,10 +198,6 @@ app.post("/questTime", (request, response) => {
             found = true;
             console.log("It was: " + user);
             db[user].times.quest = request.body.time;
-            stringedDb = JSON.stringify(db);
-            fs.writeFile('database.json', stringedDb, 'utf8', () => {
-                console.log("Successfully saved up!");
-            });
             response.end();
         }
     }
@@ -223,10 +210,6 @@ app.post("/saveState", (request, response) => {
     let found = false;
     console.log("New state update!");
     console.log("Id is:" + request.body.id);
-    stringedDb = JSON.stringify(db);
-    fs.writeFile('database.json', stringedDb, 'utf8', () => {
-        console.log("Successfully saved up!");
-    });
     for (let user in db) {
         if (db[user].password == request.body.id) {
             found = true;
@@ -236,7 +219,7 @@ app.post("/saveState", (request, response) => {
             db[user].upgradeCharacter = request.body.upgradeCharacter;
             db[user].gold = request.body.gold;
             db[user].character = request.body.character;
-            db[user].messages = request.body.messages;
+            //db[user].messages = request.body.messages;
             db[user].lvl = request.body.lvl;
             db[user].xp = request.body.xp;
             db[user].bossLvl = request.body.bossLvl;
@@ -251,15 +234,10 @@ app.post("/saveState", (request, response) => {
     }
 })
 
-
 app.post("/getState", (request, response) => {
     let found = false;
     console.log("New get state update!");
     console.log("Id is:" + request.body.id);
-    stringedDb = JSON.stringify(db);
-    fs.writeFile('database.json', stringedDb, 'utf8', () => {
-        console.log("Successfully saved up!");
-    });
     for (let user in db) {
         if (db[user].password == request.body.id) {
             found = true;
@@ -321,7 +299,6 @@ app.post("/randomEnemyArena", (request, response) => {
     }
 
     function pickRandomEnemy(obj, me) {
-        //delete obj[me];
         let names = Object.keys(obj);
         let other = Math.floor(Math.random() * names.length);
         let index = names[other];
@@ -353,7 +330,6 @@ class newPlayer {
         this.xp = parseInt(0);
         this.gold = parseInt(0);
         this.fame = parseInt(0);
-        this.messages = [];
         this.questAvailable = [];
         this.character = baseCharacter;
         let fireball = {

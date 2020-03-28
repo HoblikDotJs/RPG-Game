@@ -23,11 +23,11 @@ class Player {
     this.slots = obj.slots;
     this.spellSlot = obj.spellSlot;
     this.backpack = obj.backpack || [];
-    this.messages = obj.messages || [];
+    //    this.messages = obj.messages || [];
     this.shopItems = obj.shopItems;
     this.times = obj.times;
     this.questAvailable = obj.questAvailable || [];
-    this.readMessages();
+    // this.readMessages();
     this.calculateCharacter();
   }
 
@@ -144,6 +144,90 @@ class Player {
 
   //-------------------------------------------------------------------------------------
   //                                        QUESTS
+  async redirectToQuests() {
+    const response = await fetch("/questVerification", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "id": this.password
+      })
+    });
+    const oldTime = await response.json();
+    let newTime = Date.parse(new Date());
+    if (newTime - oldTime > this.onQuest) {
+      if (this.onQuest) { // player finished the quest and now its fight time!
+        blank();
+        changeBackground("images/blank.jpg");
+        for (let q in this.questAvailable) {
+          if (this.questAvailable[q].sel) {
+            //await this.getState();
+            this.doQuest(this.questAvailable[q]);
+            await this.saveState();
+          }
+        }
+      } else { // selecting a quest and quests are shown
+        blank();
+        changeBackground("images/blank.jpg");
+        addBackButton();
+        let quests;
+        if (this.questAvailable.length != 3) {
+          await this.getState();
+          quests = randomQuests(3);
+          this.questAvailable = quests;
+          this.saveState();
+        } else {
+          quests = this.questAvailable;
+        }
+        let selected = 0;
+        $("#screen").append($("<center><div class='container'><div id='questDiv' class='row'><div class='col-lg-8'> <ul id='questSelector' class='selectpicker' data-style='btn-dark'> </ul> </div></div></div></center>"));
+        $("#questDiv").append($("<div class='col-lg-4' id='questDescription'><p id='des'>" + quests[selected].description + "</p></div>"))
+        $("#questDiv").append($("<div class='col-lg-4' id='questXpDiv'><p id='xpRew'>" + quests[selected].xpReward + " xp </p></div>"));
+        $("#questDiv").append($("<div class='col-lg-4' id='questTimeDiv'><p id='questTime'>" + quests[selected].time / 60000 + " min </p></div>"));
+        $("#questDiv").append($("<div class='col-lg-4' id='questGoldRewDiv'><p id='goldRew'>" + quests[selected].goldReward + " gold </p></div>"))
+        for (let i = 0; i < quests.length; i++) {
+          $("#questSelector").append($("<li>" + quests[i].name + "</li>").click(() => {
+            selected = i;
+            $("#des").html(quests[selected].description);
+            $("#xpRew").html(quests[selected].xpReward + " xp");
+            $("#goldRew").html(quests[selected].goldReward + " gold");
+            $("#questTime").html(quests[selected].time / 60000 + " min");
+          }));
+        }
+        $("#questDescription").append($("<div class='row'><div class='col-lg-12'><button class='btn btn-dark'>GO</button></div></div>").click(async () => {
+          this.onQuest = quests[selected].time;
+          this.questAvailable[selected].sel = true;
+          this.saveState();
+          fetch("/questTime", {
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              "id": this.password,
+              "time": Date.parse(new Date()),
+            })
+          });
+          showQuests();
+        }));
+      }
+    } else { // player is in quest and waiting screen is shown
+      blank();
+      addBackButton();
+      changeBackground("images/blank.jpg");
+      $("#screen").append($("<center><p id='pbTime' style=''> </p></center>"));
+      $("#screen").append(progressBarCode);
+      let time = (this.onQuest - (newTime - oldTime)) / 1000
+      let min = Math.floor(time / 60);
+      let sec = Math.floor(time - min * 60);
+      let remaining = 100 - (time / (this.onQuest / 1000)) * 100;
+      $("#pb").css("width", remaining + "%");
+      $("#pbTime").html(min + " : " + sec);
+      loadingTimeout = setTimeout(showQuests, 1000);
+    }
+  }
+
   doQuest(quest) {
     let NPC = this.makeNpc();
     this.attack(NPC).then((result) => {
@@ -158,6 +242,7 @@ class Player {
       this.saveState();
     })
   }
+
   makeNpc() {
     let npcCharacter = this.character;
     for (let stat in npcCharacter) {
@@ -168,8 +253,6 @@ class Player {
     let npcName = npcArr[Math.floor(Math.random() * npcArr.length)]
     return new Enemy(npcName, npcCharacter);
   }
-
-
 
   //-------------------------------------------------------------------------------------
   async saveState() {
@@ -260,13 +343,13 @@ class Player {
       }
     }
   }
-
-  readMessages() { // TODO!!
-    for (let i = 0; i < this.messages.length; i++) {
-      console.log(this.messages[i]);
-    }
-    this.messages = [];
-  }
+  /*
+    readMessages() { // TODO!!
+      for (let i = 0; i < this.messages.length; i++) {
+        console.log(this.messages[i]);
+      }
+      this.messages = [];
+    }*/
   //-------------------------------------------------------------------------------------
   //                                FIGHTING
   async fightInArena() {
@@ -316,7 +399,7 @@ class Player {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          "id": player.password,
+          "id": this.password,
           "time": this.times.arena,
         })
       });
@@ -581,6 +664,7 @@ class Player {
       this.lvlUp();
     }
   }
+
   backpackContains(item) {
     for (let backpackItem in this.backpack) {
       if (item.name == this.backpack[backpackItem].name) {
@@ -589,6 +673,7 @@ class Player {
     }
     return false
   }
+
   playerContains(item) {
     for (let _ in this.slots[item.slot]) {
       if (item.name == this.slots[item.slot].name) {
