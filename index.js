@@ -11,7 +11,6 @@ var ref = database.ref();
 ref.once("value", function (snapshot) {
     db = snapshot.val();
 });
-
 const express = require("express");
 const app = express()
 const port = process.env.PORT || 5000;
@@ -47,9 +46,7 @@ app.post("/signup", (request, response) => {
     console.log("Name is: " + request.body.name);
     let failed = false
     for (let user in db) {
-        if (db[user].name == request.body.name.split(" ")[0]) {
-            failed = true;
-        }
+        if (db[user].name == request.body.name.split(" ")[0]) failed = true;
     }
     switch (request.body.name) {
         case undefined:
@@ -78,10 +75,8 @@ app.post("/signup", (request, response) => {
         db[name] = newP
         response.json(db[name]);
     }
-    if (failed) {
-        console.log(request.body.name + " failed")
-        response.json("undefined");
-    }
+    if (failed) console.log(request.body.name + " failed")
+    response.json("undefined");
 })
 
 app.post("/times", (request, response) => {
@@ -95,9 +90,7 @@ app.post("/times", (request, response) => {
             found = true;
         }
     }
-    if (!found) {
-        response.json("undefined");
-    }
+    if (!found) response.json("undefined");
 })
 
 app.post("/shopRefresh", (request, response) => {
@@ -112,9 +105,7 @@ app.post("/shopRefresh", (request, response) => {
             response.end();
         }
     }
-    if (!found) {
-        response.json("undefined");
-    }
+    if (!found) response.json("undefined");
 })
 
 app.post("/shopBuy", (request, response) => {
@@ -127,13 +118,12 @@ app.post("/shopBuy", (request, response) => {
             console.log("It was: " + user);
             if (parseInt(db[user].gold) >= parseInt(request.body.price)) {
                 response.json("True");
-            };
-            response.json("False");
+            } else {
+                response.json("False");
+            }
         }
     }
-    if (!found) {
-        response.json("False");
-    }
+    if (!found) response.json("False");
 })
 
 app.post("/shopItemsUpdate", (request, response) => {
@@ -148,9 +138,7 @@ app.post("/shopItemsUpdate", (request, response) => {
             response.end();
         }
     }
-    if (!found) {
-        response.json("undefined");
-    }
+    if (!found) response.json("undefined");
 })
 
 app.post("/arenaTime", (request, response) => {
@@ -165,9 +153,7 @@ app.post("/arenaTime", (request, response) => {
             response.end();
         }
     }
-    if (!found) {
-        response.end();
-    }
+    if (!found) response.end();
 })
 
 app.post("/monsterTime", (request, response) => {
@@ -184,9 +170,7 @@ app.post("/monsterTime", (request, response) => {
             response.end();
         }
     }
-    if (!found) {
-        response.end();
-    }
+    if (!found) response.end();
 })
 
 app.post("/questTime", (request, response) => {
@@ -201,9 +185,7 @@ app.post("/questTime", (request, response) => {
             response.end();
         }
     }
-    if (!found) {
-        response.end();
-    }
+    if (!found) response.end();
 })
 
 app.post("/saveState", (request, response) => {
@@ -229,9 +211,7 @@ app.post("/saveState", (request, response) => {
             response.end();
         }
     }
-    if (!found) {
-        response.end();
-    }
+    if (!found) response.end();
 })
 
 app.post("/getState", (request, response) => {
@@ -258,9 +238,7 @@ app.post("/getState", (request, response) => {
             response.json(data);
         }
     }
-    if (!found) {
-        response.end();
-    }
+    if (!found) response.end();
 })
 
 app.post("/questVerification", (request, response) => {
@@ -274,9 +252,7 @@ app.post("/questVerification", (request, response) => {
             response.json(db[user].times.quest);
         }
     }
-    if (!found) {
-        response.end();
-    }
+    if (!found) response.end();
 })
 
 app.post("/randomEnemyArena", (request, response) => {
@@ -292,19 +268,13 @@ app.post("/randomEnemyArena", (request, response) => {
             response.json(enemy);
         }
     }
-
-
-    if (!found) {
-        response.end();
-    }
+    if (!found) response.end();
 
     function pickRandomEnemy(obj, me) {
         let names = Object.keys(obj);
         let other = Math.floor(Math.random() * names.length);
         let index = names[other];
-        if (obj[index] == me) {
-            pickRandomEnemy(db, me)
-        }
+        if (obj[index] == me) pickRandomEnemy(db, me)
         return obj[index];
     }
 })
