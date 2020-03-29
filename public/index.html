@@ -9,12 +9,15 @@
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <meta name="google-signin-client_id"
         content="442990658970-ovpt3nncr2rg4ji6oudcir0a3bq3m8cm.apps.googleusercontent.com">
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="#" />
     <script src="loadingEN.js"></script>
     <script src="player.js"></script>
     <script src="sketch.js"></script>
     <script src="shop.js"></script>
     <script src="buttons.js"></script>
     <script src="bagpackFront.js"></script>
+    <script src="onSignIn.js"></script>
     <script>
         let progressBarCode =
             '<div class="progress" style="width:1530px; height:30px; margin: auto;"> <div class="progress-bar bg-dark" id="pb" style="width:0%; aria-valuemin ="0";aria-valuemax="100""></div></div>';
@@ -23,57 +26,6 @@
 </head>
 
 <body>
-    <script>
-        async function onSignIn(googleUser) {
-            let profile = googleUser.getBasicProfile();
-            const Id = profile.getId();
-            if (Id) {
-                const options = {
-                    method: "POST",
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        "id": Id
-                    })
-                }
-                const response = await fetch("/login", options);
-                const _ = await response.json()
-                if (_ == "undefined") {
-                    myName = prompt("What will be your nick? (without spaces)");
-                    const options = {
-                        method: "POST",
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            "id": Id,
-                            "name": myName,
-                        })
-                    }
-                    const response = await fetch("/signup", options);
-                    const result = await response.json()
-                    if (result == "undefined") {
-                        console.log("Bad username");
-                        return
-                    } else {
-                        console.log("signUp was ok");
-                        location.reload();
-                    }
-                } else {
-                    player = new Player(_);
-                    updateTimes("load");
-                }
-            }
-        }
-
-        function signOut() {
-            var auth2 = gapi.auth2.getAuthInstance();
-            auth2.signOut().then(function () {
-                location.reload();
-            });
-        }
-    </script>
     <div id="buttons">
         <div class="g-signin2" style='padding-left: 0' data-onsuccess="onSignIn"> </div>
     </div>
@@ -83,49 +35,6 @@
     </div>
     <div id="screen">
     </div>
-    <style>
-        @font-face {
-            font-family: 'Pateglamt Script';
-            src: local('Pateglamt Script'), url('PateglamtScriptdemoversion.otf') format('truetype');
-        }
-
-        body {
-            font-family: "Pateglamt Script";
-            background-image: url("images/blank.jpg");
-            background-repeat: no-repeat;
-            background-size: 1920px 1080px;
-            font-size: 22px;
-        }
-
-        p {
-            margin: 0%;
-            padding: 0%;
-        }
-
-        ul {
-            list-style-type: none;
-        }
-
-        #pbTime {
-            margin-top: 700px;
-        }
-
-        .btn-dark {
-            display: block;
-            background-color: #575757;
-            width: 115px;
-            height: 44;
-            font-size: 25px;
-        }
-
-        .btn-success {
-            background-color: DarkSeaGreen;
-            display: block;
-            width: 115px;
-            height: 44;
-            font-size: 25px;
-        }
-    </style>
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
         integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
     </script>

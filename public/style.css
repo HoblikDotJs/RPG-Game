@@ -1,0 +1,41 @@
+@font-face {
+    font-family: 'Pateglamt Script';
+    src: local('Pateglamt Script'), url('PateglamtScriptdemoversion.otf') format('truetype');
+}
+
+body {
+    font-family: "Pateglamt Script";
+    background-image: url("images/blank.jpg");
+    background-repeat: no-repeat;
+    background-size: 1920px 1080px;
+    font-size: 22px;
+}
+
+p {
+    margin: 0%;
+    padding: 0%;
+}
+
+ul {
+    list-style-type: none;
+}
+
+#pbTime {
+    margin-top: 700px;
+}
+
+.btn-dark {
+    display: block;
+    background-color: #575757;
+    width: 115px;
+    height: 44;
+    font-size: 25px;
+}
+
+.btn-success {
+    background-color: DarkSeaGreen;
+    display: block;
+    width: 115px;
+    height: 44;
+    font-size: 25px;
+}

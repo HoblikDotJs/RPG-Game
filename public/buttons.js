@@ -15,33 +15,25 @@ function showShopTitle() {
 }
 
 function showMonsterTime() {
-  if (times.monsterM == 0 && times.monsterS == 0) {
-    screenButtons.monsterBtn.html("Ready!");
-  } else {
-    screenButtons.monsterBtn.html(times.monsterM + " : " + times.monsterS);
-  }
+  (times.monsterM == 0 && times.monsterS == 0) ?
+  screenButtons.monsterBtn.html("Ready!"):
+    screenButtons.monsterBtn.html(times.monsterM + " : " + times.monsterS)
 }
 
 function showShopTime() {
-  if (times.shopM == 0 && times.shopS == 0) {
-    $("#reloadShop").html("Ready!");
-  } else {
+  (times.shopM == 0 && times.shopS == 0) ?
+  $("#reloadShop").html("Ready!"):
     $("#reloadShop").html(times.shopM + " : " + times.shopS);
-  }
 }
 
 function showArenaTime() {
-  if (times.arenaM == 0 && times.arenaS == 0) {
-    screenButtons.arenaBtn.html("Ready!");
-  } else {
+  (times.arenaM == 0 && times.arenaS == 0) ?
+  screenButtons.arenaBtn.html("Ready!"):
     screenButtons.arenaBtn.html(times.arenaM + " : " + times.arenaS);
-  }
 }
 
 function showQuestTime() {
-  if (times.questM == 0 && times.questS == 0) {
-    screenButtons.questBtn.html("Ready!");
-  } else {
+  (times.questM == 0 && times.questS == 0) ?
+  screenButtons.questBtn.html("Ready!"):
     screenButtons.questBtn.html(times.questM + " : " + times.questS);
-  }
 }

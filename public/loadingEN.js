@@ -2,9 +2,7 @@ class Enemy {
   constructor(name, character, reward) {
     this.name = name;
     this.character = character;
-    if (reward) {
-      this.reward = reward;
-    }
+    if (reward) this.reward = reward;
   }
 }
 

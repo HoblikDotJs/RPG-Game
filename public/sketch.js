@@ -1,5 +1,5 @@
 let player, myName;
-let password, select, shopSelect;
+let select, shopSelect;
 let loadingTimeout;
 let indexPlayFight = 0;
 let speedPlayFight = 500;
@@ -30,6 +30,7 @@ let screenButtons = {
 }
 /*
 TODO:
+quests
 FIREBALL - UPGRADES ////
 HEALING BTN WITH POTIONS - 20%HP UP (MAX)
 ABSOLUTE POSITIONS
@@ -42,7 +43,7 @@ FAME TREE
 //                                   MAIN FUNCTION
 // loads weapons, when site loads
 function setup() {
-	$.getJSON("weapons.json", function (json) {
+	$.getJSON("weapons.json", (json) => {
 		weapons = json;
 		loadEnemies();
 		loadNpcs();
@@ -53,7 +54,7 @@ function setup() {
 //MAINSCREEN, sets all things, append all buttons...
 function loadWorld() {
 	clearTimeout(loadingTimeout);
-	changeBackground("images/village.jpg")
+	changeBackground("images/village.jpg");
 	$("#buttons").empty();
 	$("#shopSel").empty();
 	$("#selector").empty();
@@ -129,11 +130,11 @@ function showQuests() {
 function arenaFight() {
 	blank();
 	changeBackground("images/blank.jpg");
-	if ((times.arenaM == undefined && times.arenaS == undefined) || (times.arenaM == 0 && times.arenaS == 0)) {
+	if ((!times.arenaM && !times.arenaS) || (times.arenaM == 0 && times.arenaS == 0)) {
 		player.fightInArena();
 	} else {
 		addBackButton();
-		$("#screen").append($("<center><p id='pbTime' style=''> </p></center>"));
+		$("#screen").append($("<center><p id='pbTime' style=''></p></center>"));
 		$("#screen").append(progressBarCode);
 		let sec = times.arenaS;
 		let min = times.arenaM;
@@ -148,11 +149,11 @@ function arenaFight() {
 function fightMonsters() {
 	blank();
 	changeBackground("images/blank.jpg");
-	if ((times.monsterM == undefined && times.monsterS == undefined) || (times.monsterM == 0 && times.monsterS == 0)) {
+	if ((!times.monsterS && !times.monsterM) || (times.monsterM == 0 && times.monsterS == 0)) {
 		player.fightNext();
 	} else {
 		addBackButton();
-		$("#screen").append($("<center><p id='pbTime' style=''> </p></center>"));
+		$("#screen").append($("<center><p id='pbTime' style=''></p></center>"));
 		$("#screen").append(progressBarCode);
 		let sec = times.monsterS;
 		let min = times.monsterM;

@@ -33,13 +33,7 @@ class Player {
 
   calculateCharacter() {
     this.character = {
-      hp: 150,
-      damage: 20,
-      armor: 10,
-      luck: 50,
-      weight: 70,
-      regen: 1,
-      magicResistance: 5
+      ...baseCharacter
     };
     for (let property in this.character) {
       this.character[property] += this.upgradeCharacter[property];
@@ -91,11 +85,7 @@ class Player {
           "time": this.times.shop,
         })
       });
-      if (selected == 0) {
-        selected = 1;
-      } else {
-        selected = 0;
-      }
+      selected = (selected == 0) ? 1 : 0
       changeSelItem();
     }
   }
@@ -107,7 +97,7 @@ class Player {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        "id": player.password,
+        "id": this.password,
         "items": this.shopItems,
       })
     });
@@ -115,9 +105,7 @@ class Player {
 
   async buyFromShop(index) {
     let item = this.shopItems[index];
-    if (item.sold == true) {
-      // idk
-    } else {
+    if (!item.sold) {
       if (parseInt(this.gold) >= parseInt(item.price)) {
         const response = await fetch("/shopBuy", {
           method: "POST",
@@ -144,7 +132,7 @@ class Player {
 
   //-------------------------------------------------------------------------------------
   //                                        QUESTS
-  async redirectToQuests() {
+  async redirectToQuests() { //TODO
     const response = await fetch("/questVerification", {
       method: "POST",
       headers: {
@@ -181,42 +169,68 @@ class Player {
           quests = this.questAvailable;
         }
         let selected = 0;
-        $("#screen").append($("<center><div class='container'><div id='questDiv' class='row'><div class='col-lg-8'> <ul id='questSelector' class='selectpicker' data-style='btn-dark'> </ul> </div></div></div></center>"));
-        $("#questDiv").append($("<div class='col-lg-4' id='questDescription'><p id='des'>" + quests[selected].description + "</p></div>"))
-        $("#questDiv").append($("<div class='col-lg-4' id='questXpDiv'><p id='xpRew'>" + quests[selected].xpReward + " xp </p></div>"));
-        $("#questDiv").append($("<div class='col-lg-4' id='questTimeDiv'><p id='questTime'>" + quests[selected].time / 60000 + " min </p></div>"));
-        $("#questDiv").append($("<div class='col-lg-4' id='questGoldRewDiv'><p id='goldRew'>" + quests[selected].goldReward + " gold </p></div>"))
+        //                  quest selector ul
+        $("#screen").append(
+          $(`<center>
+                <div class='container'>
+                  <div id='questDiv' class='row'>
+                    <div class='col-lg-8'>
+                    <ul id='questSelector' class='selectpicker' data-style='btn-dark'> </ul>
+                    </div>
+                  </div>
+                </div>
+            </center>`)
+        );
+        //                  quest description
+        $("#questDiv").append(
+          $("<div class='col-lg-4' id='questDescription'><p id='des'>" + quests[selected].description + "</p></div>")
+        )
+        //                  quest xp reward
+        $("#questDiv").append(
+          $("<div class='col-lg-4' id='questXpDiv'><p id='xpRew'>" + quests[selected].xpReward + " xp </p></div>")
+        );
+        //                  quest time
+        $("#questDiv").append(
+          $("<div class='col-lg-4' id='questTimeDiv'><p id='questTime'>" + quests[selected].time / 60000 + " min </p></div>")
+        );
+        //                  quest gold reward
+        $("#questDiv").append(
+          $("<div class='col-lg-4' id='questGoldRewDiv'><p id='goldRew'>" + quests[selected].goldReward + " gold </p></div>")
+        )
         for (let i = 0; i < quests.length; i++) {
-          $("#questSelector").append($("<li>" + quests[i].name + "</li>").click(() => {
-            selected = i;
-            $("#des").html(quests[selected].description);
-            $("#xpRew").html(quests[selected].xpReward + " xp");
-            $("#goldRew").html(quests[selected].goldReward + " gold");
-            $("#questTime").html(quests[selected].time / 60000 + " min");
-          }));
+          $("#questSelector").append($("<li>" + quests[i].name + "</li>")
+            .click(() => {
+              selected = i;
+              $("#des").html(quests[selected].description);
+              $("#xpRew").html(quests[selected].xpReward + " xp");
+              $("#goldRew").html(quests[selected].goldReward + " gold");
+              $("#questTime").html(quests[selected].time / 60000 + " min");
+            }));
         }
-        $("#questDescription").append($("<div class='row'><div class='col-lg-12'><button class='btn btn-dark'>GO</button></div></div>").click(async () => {
-          this.onQuest = quests[selected].time;
-          this.questAvailable[selected].sel = true;
-          this.saveState();
-          fetch("/questTime", {
-            method: "POST",
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              "id": this.password,
-              "time": Date.parse(new Date()),
-            })
-          });
-          showQuests();
-        }));
+        $("#questDescription").append(
+          $("<div class='row'><div class='col-lg-12'><button class='btn btn-dark'>GO</button></div></div>")
+          .click(async () => {
+            this.onQuest = quests[selected].time;
+            this.questAvailable[selected].sel = true;
+            this.saveState();
+            fetch("/questTime", {
+              method: "POST",
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                "id": this.password,
+                "time": Date.parse(new Date()),
+              })
+            });
+            showQuests();
+          }));
       }
     } else { // player is in quest and waiting screen is shown
       blank();
       addBackButton();
       changeBackground("images/blank.jpg");
-      $("#screen").append($("<center><p id='pbTime' style=''> </p></center>"));
+      $("#screen").append($("<center><p id='pbTime' style=''></p></center>"));
       $("#screen").append(progressBarCode);
       let time = (this.onQuest - (newTime - oldTime)) / 1000
       let min = Math.floor(time / 60);
@@ -244,7 +258,10 @@ class Player {
   }
 
   makeNpc() {
-    let npcCharacter = this.character;
+    let npcCharacter = {
+      ...this.character
+    };
+    console.log(npcCharacter)
     for (let stat in npcCharacter) {
       npcCharacter[stat] *= Math.random() + 0.3;
       npcCharacter[stat] = Math.floor(npcCharacter[stat]);
@@ -354,13 +371,9 @@ class Player {
   //                                FIGHTING
   async fightInArena() {
     await this.getState();
-    console.log(this);
     let oldDate = times.arena;
     let newDate = Date.parse(new Date());
     if (newDate - oldDate > 600000) {
-      //firebase.database().ref("users").once("value").then((u) => {
-      //let userObj = u.val();
-      //let enemy = pickRandomEnemy(userObj, this.name);
       const result = await fetch("/randomEnemyArena", {
         method: "POST",
         headers: {
@@ -377,20 +390,11 @@ class Player {
           this.fame += 1;
           this.xp += enemy.lvl * 5;
           this.saveState();
-          console.log(this);
           console.log("you won!!")
         } else {
           console.log("you lost!!")
-          /*firebase.database().ref("users/" + enemy.name + "/gold").transaction((gold) => {
-            return gold += 10;
-          });
-          firebase.database().ref("users/" + enemy.name + "/fame").transaction((fame) => {
-            return fame += 1;
-          });
-          */
         }
       });
-      //  });
       this.times.arena = Date.parse(new Date());
       this.saveState();
       fetch("/arenaTime", {
@@ -419,9 +423,7 @@ class Player {
             let drop = enemies[this.bossLvl].reward;
             let slot;
             for (let part in weapons) {
-              if (weapons[part][drop]) {
-                slot = part;
-              }
+              if (weapons[part][drop]) slot = part;
             }
             this.backpack.push(weapons[slot][drop]);
             console.log("You won " + enemies[this.bossLvl].reward);
@@ -468,96 +470,111 @@ class Player {
       enemyHpBarCreate();
 
       function myHpBarCreate() {
-        let _ = $('<div class="progress" id="myHpText" style="width:300px; height:30px; margin: auto;margin-top:15px;"> <div class="progress-bar" id="myHpB" style="width:100%;  background-color: DarkSeaGreen; aria-valuemin ="0";aria-valuemax="100""></div></div>');
-        $("#screen").append(_)
+        $("#screen").append(
+          $(`<div class="progress" id="myHpText" style="width:300px; height:30px; margin: auto;margin-top:15px;">
+                <div class="progress-bar" id="myHpB" style="width:100%;  background-color: DarkSeaGreen; aria-valuemin ="0";aria-valuemax="100"">
+                </div>
+             </div>`)
+        );
       }
 
       function enemyHpBarCreate() {
-        let _ = $('<div class="progress" id="EnemyHpText" style="width:300px; height:30px; margin: auto;margin-top:15px;"> <div class="progress-bar" id="enemyHpB" style="width:100%; background-color: Crimson; aria-valuemin ="0";aria-valuemax="100""></div></div>');
-        $("#screen").append(_)
+        $("#screen").append(
+          $(`<div class="progress" id="EnemyHpText" style="width:300px; height:30px; margin: auto;margin-top:15px;"> 
+               <div class="progress-bar" id="enemyHpB" style="width:100%; background-color: Crimson; aria-valuemin ="0";aria-valuemax="100"">
+               </div>
+            </div>`)
+        );
       }
 
       function roundTimeBarCreate() {
-        let _ = $('<div class="progress" style="width:300px; height:30px; margin: auto;margin-top:15px;"> <div class="progress-bar" id="roundTimeBar" style="width:100%; background-color: Gray; aria-valuemin ="0";aria-valuemax="100""></div></div>');
-        $("#screen").append(_)
+        $("#screen").append(
+          $(`<div class="progress" style="width:300px; height:30px; margin: auto;margin-top:15px;">
+                <div class="progress-bar" id="roundTimeBar" style="width:100%; background-color: Gray; aria-valuemin ="0";aria-valuemax="100"">
+                </div>
+             </div>`)
+        );
       }
 
       function regenButtonCreate() {
-        regenBtn = $("<button>REGEN</button>").click(() => {
-          if (!END) {
-            timeOnBar = -1;
-            timeInterval = clearInterval(timeInterval);
-            timeOut = clearTimeout(timeOut);
-            timeOut = false;
-            myHp += parseInt(me.character.regen); // potions later
-            console.log("REGEN HP: " + parseInt(me.character.regen));
-            checkIfDead();
-            enemyHit();
-            checkIfDead();
-            setT();
-          }
-        });
+        regenBtn = $("<button>REGEN</button>")
+          .click(() => {
+            if (!END) {
+              timeOnBar = -1;
+              timeInterval = clearInterval(timeInterval);
+              timeOut = clearTimeout(timeOut);
+              timeOut = false;
+              myHp += parseInt(me.character.regen); // potions later
+              console.log("REGEN HP: " + parseInt(me.character.regen));
+              checkIfDead();
+              enemyHit();
+              checkIfDead();
+              setT();
+            }
+          });
         $("#screen").append(regenBtn);
       }
 
       function spellButtonCreate() {
-        spellBtn = $("<button>SPELL</button>").click(() => {
-          if (!END) {
-            timeOnBar = -1;
-            timeInterval = clearInterval(timeInterval);
-            timeOut = clearTimeout(timeOut);
-            timeOut = false;
-            if (parseInt(me.spellSlot[0].damage) - parseInt(enemy.character.magicResistance) / 2 > 0) {
-              enemyHp -= parseInt(me.spellSlot[0].damage) - parseInt(enemy.character.magicResistance) / 2;
-              console.log("SPELL DMG: " + (parseInt(me.spellSlot[0].damage) - parseInt(enemy.character.magicResistance) / 2));
-            } else {
-              console.log("YOUR SPELL DMG: " + parseInt(me.spellSlot[0].damage), "ENEMY EfMR: " + parseInt(enemy.character.magicResistance) / 2);
+        spellBtn = $("<button>SPELL</button>")
+          .click(() => {
+            if (!END) {
+              timeOnBar = -1;
+              timeInterval = clearInterval(timeInterval);
+              timeOut = clearTimeout(timeOut);
+              timeOut = false;
+              if (parseInt(me.spellSlot[0].damage) - parseInt(enemy.character.magicResistance) / 2 > 0) {
+                enemyHp -= parseInt(me.spellSlot[0].damage) - parseInt(enemy.character.magicResistance) / 2;
+                console.log("SPELL DMG: " + (parseInt(me.spellSlot[0].damage) - parseInt(enemy.character.magicResistance) / 2));
+              } else {
+                console.log("YOUR SPELL DMG: " + parseInt(me.spellSlot[0].damage), "ENEMY EfMR: " + parseInt(enemy.character.magicResistance) / 2);
+              }
+              checkIfDead();
+              enemyHit();
+              checkIfDead();
+              setT();
             }
-            checkIfDead();
-            enemyHit();
-            checkIfDead();
-            setT();
-          }
-        });
+          });
         $("#screen").append(spellBtn);
       }
 
       function attackButtonCreate() {
-        attackBtn = $("<button>ATTACK</button>").click(() => {
-          if (!END) {
-            timeOnBar = -1;
-            timeInterval = clearInterval(timeInterval);
-            timeOut = clearTimeout(timeOut);
-            timeOut = false;
-            let r = Math.random() * 100;
-            let luck = me.character.luck;
-            if (r < luck / 10) { //CRIT
-              let dmg = Math.floor((parseInt(me.character.damage) - parseInt(enemy.character.armor) / 2) * (r / 100 + 1));
-              myHp += parseInt(me.character.regen);
-              if (dmg > 0) {
-                enemyHp -= dmg;
-                console.log("YOUR CRIT DMG: " + dmg);
-                console.log("YOU REGENERATED: " + me.character.regen);
-              } else {
-                console.log("Your DMG: " + dmg, "His AfA: " + parseInt(enemy.character.armor) / 2);
-                console.log("YOU REGENERATED: " + me.character.regen);
+        attackBtn = $("<button>ATTACK</button>")
+          .click(() => {
+            if (!END) {
+              timeOnBar = -1;
+              timeInterval = clearInterval(timeInterval);
+              timeOut = clearTimeout(timeOut);
+              timeOut = false;
+              let r = Math.random() * 100;
+              let luck = me.character.luck;
+              if (r < luck / 10) { //CRIT
+                let dmg = Math.floor((parseInt(me.character.damage) - parseInt(enemy.character.armor) / 2) * (r / 100 + 1));
+                myHp += parseInt(me.character.regen);
+                if (dmg > 0) {
+                  enemyHp -= dmg;
+                  console.log("YOUR CRIT DMG: " + dmg);
+                  console.log("YOU REGENERATED: " + me.character.regen);
+                } else {
+                  console.log("Your DMG: " + dmg, "His AfA: " + parseInt(enemy.character.armor) / 2);
+                  console.log("YOU REGENERATED: " + me.character.regen);
+                }
+              } else if (r < luck) { //NORMAL
+                if (parseInt(me.character.damage) - parseInt(enemy.character.armor) / 2 > 0) {
+                  enemyHp -= parseInt(me.character.damage) - parseInt(enemy.character.armor) / 2;
+                  console.log("YOUR ATTACK DMG: " + (parseInt(me.character.damage) - parseInt(enemy.character.armor) / 2));
+                } else {
+                  console.log("YOUR DMG: " + parseInt(me.character.damage), "His EfA: " + parseInt(enemy.character.armor) / 2)
+                }
+              } else { //MISS
+                console.log("YOU MISSED");
               }
-            } else if (r < luck) { //NORMAL
-              if (parseInt(me.character.damage) - parseInt(enemy.character.armor) / 2 > 0) {
-                enemyHp -= parseInt(me.character.damage) - parseInt(enemy.character.armor) / 2;
-                console.log("YOUR ATTACK DMG: " + (parseInt(me.character.damage) - parseInt(enemy.character.armor) / 2));
-              } else {
-                console.log("YOUR DMG: " + parseInt(me.character.damage), "His EfA: " + parseInt(enemy.character.armor) / 2)
-              }
-            } else { //MISS
-              console.log("YOU MISSED");
+              checkIfDead();
+              enemyHit();
+              checkIfDead();
+              setT();
             }
-            checkIfDead();
-            enemyHit();
-            checkIfDead();
-            setT();
-          }
-        });
+          });
         $("#screen").append(attackBtn);
       }
 
@@ -591,14 +608,17 @@ class Player {
             console.log("ENEMY MISSED");
           }
           fight_round += 1;
-          console.log("your HP: " + myHp, "enemy HP:" + enemyHp, "round :" + fight_round);
+          console.log(`%cYour HP: ${myHp}` + `%c Enemy HP: ${enemyHp}` + `%c Round: ${fight_round}`,
+            "font-weight: 900;color: LightGreen",
+            "font-weight:900;color: Orange",
+            "font-weight:900;color: DodgerBlue");
         }
         let enemyRemainingHp = (enemyHp / enemy.character.hp) * 100
         $("#enemyHpB").css("width", enemyRemainingHp + "%");
         let myRemainingHp = (myHp / me.character.hp) * 100
         $("#myHpB").css("width", myRemainingHp + "%");
-        $("#myHpB").html("<b><p style='color:black;font-size:25px '>" + myHp + "</p></b>");
-        $("#enemyHpB").html("<b><p style='color:black;font-size:25px '>" + enemyHp + "</p></b>");
+        $("#myHpB").html("<b><p style='color:black;font-size:25px'>" + myHp + "</p></b>");
+        $("#enemyHpB").html("<b><p style='color:black;font-size:25px'>" + enemyHp + "</p></b>");
       }
 
       function checkIfDead() {
@@ -667,18 +687,14 @@ class Player {
 
   backpackContains(item) {
     for (let backpackItem in this.backpack) {
-      if (item.name == this.backpack[backpackItem].name) {
-        return true
-      }
+      if (item.name == this.backpack[backpackItem].name) return true
     }
     return false
   }
 
   playerContains(item) {
     for (let _ in this.slots[item.slot]) {
-      if (item.name == this.slots[item.slot].name) {
-        return true
-      }
+      if (item.name == this.slots[item.slot].name) return true
     }
     return false
   }

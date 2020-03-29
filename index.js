@@ -16,7 +16,7 @@ const express = require("express");
 const app = express()
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
-    console.log("listening at port 5000");
+    console.log(`Listening at port ${port}`);
 });
 app.use(express.static("public"));
 app.use(express.json({
@@ -354,8 +354,8 @@ class newPlayer {
             rightArm: weapons.rightArm["Nothing"],
             ring: weapons.ring["Nothing"],
             neck: weapons.neck["Nothing"],
+            head: weapons.head["Nothing"],
         }
-
         this.times = {
             arena: 0,
             monsters: 0,
