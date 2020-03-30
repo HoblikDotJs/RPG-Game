@@ -208,6 +208,7 @@ app.post("/saveState", (request, response) => {
             db[user].fame = request.body.fame;
             db[user].slots = request.body.slots;
             db[user].backpack = request.body.backpack;
+            db[user].potions = request.body.potions;
             response.end();
         }
     }
@@ -235,6 +236,7 @@ app.post("/getState", (request, response) => {
             data["fame"] = db[user].fame
             data["slots"] = db[user].slots
             data["backpack"] = db[user].backpack
+            data["potions"] = db[user].potions
             response.json(data);
         }
     }
@@ -257,7 +259,6 @@ app.post("/questVerification", (request, response) => {
 
 app.post("/randomEnemyArena", (request, response) => {
     let found = false;
-    console.log("New arena time update!");
     console.log("Id is:" + request.body.id);
     for (let user in db) {
         if (db[user].password == request.body.id) {
@@ -265,6 +266,7 @@ app.post("/randomEnemyArena", (request, response) => {
             console.log("It was: " + user);
             let users = db;
             const enemy = pickRandomEnemy(users, user)
+            console.log(`${user} attacked ${enemy.name}`);
             response.json(enemy);
         }
     }
@@ -308,6 +310,7 @@ class newPlayer {
         }
         this.spellSlot = [fireball];
         this.shopItems = [];
+        this.potions = 3;
         this.upgradeCharacter = {
             hp: 0,
             damage: 0,

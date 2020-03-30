@@ -23,6 +23,7 @@ class Player {
     this.slots = obj.slots;
     this.spellSlot = obj.spellSlot;
     this.backpack = obj.backpack || [];
+    this.potions = obj.potions;
     //    this.messages = obj.messages || [];
     this.shopItems = obj.shopItems;
     this.times = obj.times;
@@ -242,6 +243,7 @@ class Player {
     }
   }
 
+
   doQuest(quest) {
     let NPC = this.makeNpc();
     this.attack(NPC).then((result) => {
@@ -293,6 +295,7 @@ class Player {
         "fame": this.fame,
         "slots": this.slots,
         "backpack": this.backpack,
+        "potions": this.potions,
       })
     });
     return
@@ -322,6 +325,7 @@ class Player {
       this.fame = data.fame;
       this.slots = data.slots;
       this.backpack = data.backpack;
+      this.potions = data.potions;
       resolve(true);
     })
   }
@@ -497,15 +501,20 @@ class Player {
       }
 
       function regenButtonCreate() {
-        regenBtn = $("<button>REGEN</button>")
+        regenBtn = $("<button>REGEN (" + player.potions + ")</button>")
           .click(() => {
-            if (!END) {
+            if (!END && player.potions > 0) {
+              player.potions--;
+              regenBtn.html("REGEN (" + player.potions + ")")
               timeOnBar = -1;
               timeInterval = clearInterval(timeInterval);
               timeOut = clearTimeout(timeOut);
               timeOut = false;
-              myHp += parseInt(me.character.regen); // potions later
-              console.log("REGEN HP: " + parseInt(me.character.regen));
+              myHp += parseInt(me.character.hp) / 5; // potions later
+              if (myHp > player.character.hp) {
+                myHp = player.character.hp;
+              }
+              console.log("REGEN HP: " + parseInt(me.character.hp) / 5);
               checkIfDead();
               enemyHit();
               checkIfDead();
