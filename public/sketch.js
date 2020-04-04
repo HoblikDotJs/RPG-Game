@@ -32,7 +32,6 @@ let screenButtons = {
 TODO:
 quests
 FIREBALL - UPGRADES ////
-HEALING BTN WITH POTIONS - 20%HP UP (MAX)
 ABSOLUTE POSITIONS
 QUESTS LAYOUT
 INVENTORY LAYOUT
@@ -329,6 +328,9 @@ function con(str) {
 			break;
 		case "neck":
 			string = "Neck";
+			break;
+		case "potions":
+			string = "Potion";
 			break;
 	}
 	return string;

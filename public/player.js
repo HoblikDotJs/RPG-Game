@@ -65,8 +65,14 @@ class Player {
           }
         }
       }
-      if (shoppingWeapons.length >= 3) {
-        for (let i = 0; i < 3; i++) {
+      let num = 3;
+      if (Math.random() > 0.4) {
+        this.shopItems.push(weapons["potions"]["Hp Potion"]);
+        console.log("ADDING POTION")
+        num--;
+      }
+      if (shoppingWeapons.length > num) {
+        for (let i = 0; i < num; i++) {
           let randomIndex = Math.floor(Math.random() * shoppingWeapons.length);
           this.shopItems.push(shoppingWeapons[randomIndex]);
           shoppingWeapons.splice(randomIndex, 1);
@@ -121,7 +127,11 @@ class Player {
         const result = await response.json();
         if (result == "True") {
           this.gold -= parseInt(item.price);
-          this.backpack.push(item);
+          if (item.slot != "potions") {
+            this.backpack.push(item);
+          } else {
+            this.potions++;
+          }
           this.shopItems[index].sold = true;
           this.updateShopItems();
           this.saveState();
@@ -257,7 +267,7 @@ class Player {
       this.onQuest = 0;
       this.saveState();
     })
-  }
+  };
 
   makeNpc() {
     let npcCharacter = {

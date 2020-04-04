@@ -697,6 +697,16 @@
       "slot": "rightArm"
     }
   },
+  "potions": {
+    "Hp Potion": {
+      "name": "Hp Potion",
+      "price": 1000,
+      "properties": {
+        "hp": "+2O%"
+      },
+      "slot": "potions"
+    }
+  },
   "ring": {
     "Cassiel's Belt": {
       "name": "Cassiel's Belt",
