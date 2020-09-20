@@ -81,8 +81,8 @@ app.post("/signup", (request, response) => {
 
 app.post("/times", (request, response) => {
     let found = false;
-    //console.log("New times update!");
-    //console.log("Id is:" + request.body.id);
+    console.log("New times update!");
+    console.log("Id is:" + request.body.id);
     for (let user in db) {
         if (db[user].password == request.body.id) {
             response.json(db[user].times);

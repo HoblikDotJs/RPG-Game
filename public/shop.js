@@ -2,7 +2,7 @@ let selected;
 
 function redirectToShop() {
   blank();
-  changeBackground("images/shop.jpg");
+  changeBackground("images/screens/shop.jpg");
   addBackButton();
   selected = 0;
   let parent = $(`<div class='container' style='margin-top:225px;'>
@@ -47,7 +47,7 @@ function changeSelItem() {
     $("<center><p style='height:52px; font-size: 29px'>" + "Slot: " + itemSlot + "</p></center>")
   );
 
-  let itemPriceHTML = $("<center><p style='height:52px; font-size: 29px'>" + "Price: " + itemPriceValue + " gold <center>");
+  let itemPriceHTML = $("<center><p style='height:52px; font-size: 29px'>" + "Price: " + itemPriceValue + " <img src='images/gold.png' height='29' ><center>");
   parent.append(itemPriceHTML);
   $("#itemImagePNG").attr("src", 'images/items/' + itemName + '.png');
   (player.gold >= player.shopItems[selected].price) ? itemPriceHTML.css('color', 'Chartreuse'): itemPriceHTML.css('color', 'red');

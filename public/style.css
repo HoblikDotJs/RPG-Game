@@ -21,14 +21,16 @@ ul {
 }
 
 #pbTime {
-    margin-top: 700px;
+    margin-top: 42%;
+    font-size: 48px;
+    color: rgb(220, 150, 50, 0.8);
 }
 
 .btn-dark {
     display: block;
     background-color: #575757;
     width: 115px;
-    height: 44;
+    height: 44px;
     font-size: 25px;
 }
 
@@ -36,6 +38,6 @@ ul {
     background-color: DarkSeaGreen;
     display: block;
     width: 115px;
-    height: 44;
+    height: 44px;
     font-size: 25px;
 }

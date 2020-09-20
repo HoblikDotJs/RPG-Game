@@ -41,6 +41,7 @@ FAME TREE
 //--------------------------------------------------------------------------------------------
 //                                   MAIN FUNCTION
 // loads weapons, when site loads
+
 function setup() {
 	$.getJSON("weapons.json", (json) => {
 		weapons = json;
@@ -53,7 +54,7 @@ function setup() {
 //MAINSCREEN, sets all things, append all buttons...
 function loadWorld() {
 	clearTimeout(loadingTimeout);
-	changeBackground("images/village.jpg");
+	changeBackground("images/screens/village.jpg");
 	$("#buttons").empty();
 	$("#shopSel").empty();
 	$("#selector").empty();
@@ -80,6 +81,9 @@ function loadWorld() {
 	parent.append(screenButtons.questBtn);
 	parent.append(screenButtons.showShopBtn);
 }
+
+
+
 //---------------------------------------------------------------------------------------
 //                                       BUTTON CLICKS
 
@@ -88,7 +92,7 @@ function showBestPlayers() {
 	console.log("Currently unavailable :(");
 	blank();
 	addBackButton();
-	changeBackground("images/blank.jpg");
+	changeBackground("images/screens/blank.jpg");
 	/*
 	let bestPlayers = [];
 	firebase.database().ref("users").on("value", function (snapshot) {
@@ -128,11 +132,12 @@ function showQuests() {
 // fight in arena
 function arenaFight() {
 	blank();
-	changeBackground("images/blank.jpg");
+	changeBackground("images/screens/blank.jpg");
 	if ((!times.arenaM && !times.arenaS) || (times.arenaM == 0 && times.arenaS == 0)) {
 		player.fightInArena();
 	} else {
 		addBackButton();
+		changeBackground("images/screens/L2.jpg");
 		$("#screen").append($("<center><p id='pbTime' style=''></p></center>"));
 		$("#screen").append(progressBarCode);
 		let sec = times.arenaS;
@@ -147,11 +152,12 @@ function arenaFight() {
 // fight the next monster 
 function fightMonsters() {
 	blank();
-	changeBackground("images/blank.jpg");
+	changeBackground("images/screens/blank.jpg");
 	if ((!times.monsterS && !times.monsterM) || (times.monsterM == 0 && times.monsterS == 0)) {
 		player.fightNext();
 	} else {
 		addBackButton();
+		changeBackground("images/screens/L1.jpg");
 		$("#screen").append($("<center><p id='pbTime' style=''></p></center>"));
 		$("#screen").append(progressBarCode);
 		let sec = times.monsterS;
@@ -335,3 +341,17 @@ function con(str) {
 	}
 	return string;
 }
+/*
+function toggleFullScreen() {
+	var doc = window.document;
+	var docEl = doc.documentElement;
+
+	var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+	var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+	if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+		requestFullScreen.call(docEl);
+	} else {
+		cancelFullScreen.call(doc);
+	}
+}*/

@@ -33,7 +33,7 @@ function showCharacter() {
   parent.empty();
   parent.append($("<center><b><p style='height:45px; font-size:25px;'>" + player.name + "</p></b></center>"));
   parent.append($("<center><p style='height:32px; font-size:17px'>" + "Lvl: " + player.lvl + "</p></center>"));
-  parent.append($("<center><p style='height:32px; font-size:17px;'>" + "Gold: " + player.gold + " gold </p></center>"));
+  parent.append($("<center><p style='height:32px; font-size:17px;'>" + player.gold + "  <img src='images/gold.png' height='17'> </p></center>"));
   for (let property in player.character) {
     parent.append(
       $('<center><p style="height:32px; font-size:17px">' + con(property) + ": " + player.character[property] + '</p></center>')

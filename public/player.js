@@ -158,7 +158,7 @@ class Player {
     if (newTime - oldTime > this.onQuest) {
       if (this.onQuest) { // player finished the quest and now its fight time!
         blank();
-        changeBackground("images/blank.jpg");
+        changeBackground("images/screens/blank.jpg");
         for (let q in this.questAvailable) {
           if (this.questAvailable[q].sel) {
             //await this.getState();
@@ -168,7 +168,7 @@ class Player {
         }
       } else { // selecting a quest and quests are shown
         blank();
-        changeBackground("images/blank.jpg");
+        changeBackground("images/screens/blank.jpg");
         addBackButton();
         let quests;
         if (this.questAvailable.length != 3) {
@@ -206,7 +206,7 @@ class Player {
         );
         //                  quest gold reward
         $("#questDiv").append(
-          $("<div class='col-lg-4' id='questGoldRewDiv'><p id='goldRew'>" + quests[selected].goldReward + " gold </p></div>")
+          $("<div class='col-lg-4' id='questGoldRewDiv'><p id='goldRew'>" + quests[selected].goldReward + " <img src='images/gold.png' height='15'> </div>")
         )
         for (let i = 0; i < quests.length; i++) {
           $("#questSelector").append($("<li>" + quests[i].name + "</li>")
@@ -214,7 +214,7 @@ class Player {
               selected = i;
               $("#des").html(quests[selected].description);
               $("#xpRew").html(quests[selected].xpReward + " xp");
-              $("#goldRew").html(quests[selected].goldReward + " gold");
+              $("#goldRew").html(quests[selected].goldReward + " <img src='images/gold.png' height='15'>");
               $("#questTime").html(quests[selected].time / 60000 + " min");
             }));
         }
@@ -240,7 +240,7 @@ class Player {
     } else { // player is in quest and waiting screen is shown
       blank();
       addBackButton();
-      changeBackground("images/blank.jpg");
+      changeBackground("images/screens/L2.jpg");
       $("#screen").append($("<center><p id='pbTime' style=''></p></center>"));
       $("#screen").append(progressBarCode);
       let time = (this.onQuest - (newTime - oldTime)) / 1000
