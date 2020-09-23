@@ -130,24 +130,33 @@ function showQuests() {
 }
 
 // fight in arena
-function arenaFight() {
+async function arenaFight() {
 	blank();
 	changeBackground("images/screens/blank.jpg");
+	await updateTimes();
 	if ((!times.arenaM && !times.arenaS) || (times.arenaM == 0 && times.arenaS == 0)) {
+		// fight
 		player.fightInArena();
 	} else {
+		// waiting for another fight
+		blank();
 		addBackButton();
 		changeBackground("images/screens/L2.jpg");
 		$("#screen").append($("<center><p id='pbTime' style=''></p></center>"));
 		$("#screen").append(progressBarCode);
-		let sec = times.arenaS;
-		let min = times.arenaM;
-		let remaining = (1 - ((min * 60 + sec) / 600)) * 100;
-		$("#pb").css("width", remaining + "%");
-		$("#pbTime").html(min + " : " + sec);
-		loadingTimeout = setTimeout(arenaFight, 1000);
+		updateArenaWaitingScreen();
+
+		function updateArenaWaitingScreen() {
+			let sec = times.arenaS;
+			let min = times.arenaM;
+			let remaining = (1 - ((min * 60 + sec) / 600)) * 100;
+			$("#pb").css("width", remaining + "%");
+			$("#pbTime").html(min + " : " + sec);
+			loadingTimeout = setTimeout(updateArenaWaitingScreen, 1000);
+		}
 	}
 }
+
 
 // fight the next monster 
 function fightMonsters() {
@@ -156,16 +165,21 @@ function fightMonsters() {
 	if ((!times.monsterS && !times.monsterM) || (times.monsterM == 0 && times.monsterS == 0)) {
 		player.fightNext();
 	} else {
+		blank();
 		addBackButton();
 		changeBackground("images/screens/L1.jpg");
 		$("#screen").append($("<center><p id='pbTime' style=''></p></center>"));
 		$("#screen").append(progressBarCode);
-		let sec = times.monsterS;
-		let min = times.monsterM;
-		let remaining = (1 - ((min * 60 + sec) / 3600)) * 100;
-		$("#pb").css("width", remaining + "%");
-		$("#pbTime").html(min + " : " + sec);
-		loadingTimeout = setTimeout(fightMonsters, 1000);
+		updateMonstersWaitingScreen();
+
+		function updateMonstersWaitingScreen() {
+			let sec = times.monsterS;
+			let min = times.monsterM;
+			let remaining = (1 - ((min * 60 + sec) / 3600)) * 100;
+			$("#pb").css("width", remaining + "%");
+			$("#pbTime").html(min + " : " + sec);
+			loadingTimeout = setTimeout(updateMonstersWaitingScreen, 1000);
+		}
 	}
 }
 
@@ -216,7 +230,7 @@ function changeBackground(str) {
 }
 
 //updates all times(quest time, arena time...) 
-async function updateTimes(str) {
+async function updateTimes(str) { // server
 	const options = {
 		method: "POST",
 		headers: {
@@ -234,10 +248,11 @@ async function updateTimes(str) {
 	}
 	if (str === "load") { // just for loading into the game 
 		loadWorld();
-		setInterval(updateTimes, 1000);
+		//setInterval(updateTimes, 1000);
 	}
 	let oldTime = serverTimes.monsters;
 	let newTime = Date.parse(new Date());
+	// MONSTERS
 	times.monster = oldTime;
 	if (newTime - oldTime > 600000 * 6) {
 		times.monsterM = 0;
@@ -247,6 +262,7 @@ async function updateTimes(str) {
 		times.monsterM = Math.floor(time / 60);
 		times.monsterS = Math.floor(time - times.monsterM * 60);
 	}
+	// SHOP
 	oldTime = serverTimes.shop
 	times.shop = oldTime;
 	if (player.shopItems == undefined || player.shopItems.length == 0) {
@@ -261,6 +277,7 @@ async function updateTimes(str) {
 		times.shopM = Math.floor(time / 60);
 		times.shopS = Math.floor(time - times.shopM * 60);
 	}
+	// ARENA
 	oldTime = serverTimes.arena;
 	times.arena = oldTime;
 	if (newTime - oldTime > 600000) {
@@ -272,7 +289,62 @@ async function updateTimes(str) {
 		times.arenaM = Math.floor(time / 60);
 		times.arenaS = Math.floor(time - times.arenaM * 60);
 	}
+	// QUEST
 	oldTime = serverTimes.quest;
+	times.quest = oldTime;
+	if (newTime - oldTime > player.onQuest) {
+		times.questS = 0;
+		times.questM = 0;
+	} else {
+		let time = (player.onQuest - (newTime - oldTime)) / 1000
+		times.questM = Math.floor(time / 60);
+		times.questS = Math.floor(time - times.questM * 60);
+	}
+}
+
+function updateTimesClient(str) { // client
+	if (str === "load") { // just for loading into the game 
+		setInterval(updateTimesClient, 1000);
+	}
+	// MONSTERS
+	let oldTime = times.monster;
+	let newTime = Date.parse(new Date());
+	times.monster = oldTime;
+	if (newTime - oldTime > 600000 * 6) {
+		times.monsterM = 0;
+		times.monsterS = 0;
+	} else {
+		let time = (600000 * 6 - (newTime - oldTime)) / 1000;
+		times.monsterM = Math.floor(time / 60);
+		times.monsterS = Math.floor(time - times.monsterM * 60);
+	}
+	//SHOP
+	oldTime = times.shop
+	times.shop = oldTime;
+	if (player.shopItems == undefined || player.shopItems.length == 0) {
+		player.showShop();
+	}
+	if (newTime - oldTime > 600000) {
+		times.shopM = 0;
+		times.shopS = 0;
+	} else {
+		let time = (600000 - (newTime - oldTime)) / 1000
+		times.shopM = Math.floor(time / 60);
+		times.shopS = Math.floor(time - times.shopM * 60);
+	}
+	//ARENA
+	oldTime = times.arena;
+	times.arena = oldTime;
+	if (newTime - oldTime > 600000) {
+		times.arenaS = 0;
+		times.arenaM = 0;
+	} else {
+		let time = (600000 - (newTime - oldTime)) / 1000
+		times.arenaM = Math.floor(time / 60);
+		times.arenaS = Math.floor(time - times.arenaM * 60);
+	}
+	//QUEST
+	oldTime = times.quest;
 	times.quest = oldTime;
 	if (newTime - oldTime > player.onQuest) {
 		times.questS = 0;

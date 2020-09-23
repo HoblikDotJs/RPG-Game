@@ -82,7 +82,7 @@ app.post("/signup", (request, response) => {
 app.post("/times", (request, response) => {
     let found = false;
     console.log("New times update!");
-    console.log("Id is:" + request.body.id);
+    //console.log("Id is:" + request.body.id);
     for (let user in db) {
         if (db[user].password == request.body.id) {
             response.json(db[user].times);
@@ -229,7 +229,7 @@ app.post("/getState", (request, response) => {
             data["upgradeCharacter"] = db[user].upgradeCharacter
             data["gold"] = db[user].gold
             data["character"] = db[user].character
-            data["message"] = db[user]
+            //   data["message"] = db[user]
             data["lvl"] = db[user].lvl
             data["xp"] = db[user].xp
             data["bossLvl"] = db[user].bossLvl

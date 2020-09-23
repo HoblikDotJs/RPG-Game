@@ -50,7 +50,8 @@ class Player {
   }
   //-------------------------------------------------------------------------------------
   //                                  SHOP
-  showShop() {
+  async showShop() {
+    await updateTimes();
     let oldDate = times.shop;
     let newDate = Date.parse(new Date());
     if (newDate - oldDate > 600000) { // 10min
@@ -161,7 +162,7 @@ class Player {
         changeBackground("images/screens/blank.jpg");
         for (let q in this.questAvailable) {
           if (this.questAvailable[q].sel) {
-            //await this.getState();
+            await this.getState();
             this.doQuest(this.questAvailable[q]);
             await this.saveState();
           }
@@ -238,18 +239,23 @@ class Player {
           }));
       }
     } else { // player is in quest and waiting screen is shown
+      let onQuest = player.onQuest;
       blank();
       addBackButton();
       changeBackground("images/screens/L2.jpg");
       $("#screen").append($("<center><p id='pbTime' style=''></p></center>"));
       $("#screen").append(progressBarCode);
-      let time = (this.onQuest - (newTime - oldTime)) / 1000
-      let min = Math.floor(time / 60);
-      let sec = Math.floor(time - min * 60);
-      let remaining = 100 - (time / (this.onQuest / 1000)) * 100;
-      $("#pb").css("width", remaining + "%");
-      $("#pbTime").html(min + " : " + sec);
-      loadingTimeout = setTimeout(showQuests, 1000);
+      updateQuestWaitingScreen();
+
+      function updateQuestWaitingScreen() {
+        let time = (onQuest - (Date.parse(new Date()) - oldTime)) / 1000
+        let min = Math.floor(time / 60);
+        let sec = Math.floor(time - min * 60);
+        let remaining = 100 - (time / (onQuest / 1000)) * 100;
+        $("#pb").css("width", remaining + "%");
+        $("#pbTime").html(min + " : " + sec);
+        loadingTimeout = setTimeout(updateQuestWaitingScreen, 1000);
+      }
     }
   }
 
@@ -328,7 +334,7 @@ class Player {
       this.upgradeCharacter = data.upgradeCharacter;
       this.gold = data.gold;
       this.character = data.character;
-      this.messages = data.messages;
+      //    this.messages = data.messages;
       this.lvl = data.lvl;
       this.xp = data.xp;
       this.bossLvl = data.bossLvl;
@@ -404,14 +410,11 @@ class Player {
           this.fame += 1;
           this.xp += enemy.lvl * 5;
           this.saveState();
-          console.log("you won!!")
-        } else {
-          console.log("you lost!!")
         }
       });
       this.times.arena = Date.parse(new Date());
       this.saveState();
-      fetch("/arenaTime", {
+      await fetch("/arenaTime", {
         method: "POST",
         headers: {
           'Content-Type': 'application/json'
@@ -421,10 +424,11 @@ class Player {
           "time": this.times.arena,
         })
       });
+      await updateTimes();
     }
   }
 
-  async fightNext() {
+  async fightNext() { // fight boss
     await this.getState();
     let oldDate = times.monster;
     let thisDate = Date.parse(new Date());

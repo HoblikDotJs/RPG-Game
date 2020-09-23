@@ -36,7 +36,8 @@ async function onSignIn(googleUser) {
             }
         } else {
             player = new Player(_);
-            updateTimes("load");
+            await updateTimes("load");
+            updateTimesClient("load");
         }
     }
 }
