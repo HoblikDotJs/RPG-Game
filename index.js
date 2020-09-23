@@ -88,6 +88,8 @@ app.post("/times", (request, response) => {
             response.json(db[user].times);
             // console.log("It was: " + user);
             found = true;
+            console.log("SAVING DB")
+            database.ref().set(db)
         }
     }
     if (!found) response.json("undefined");

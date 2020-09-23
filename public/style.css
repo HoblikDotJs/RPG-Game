@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'Pateglamt Script';
-    src: local('Pateglamt Script'), url('PateglamtScriptdemoversion.otf') format('truetype');
+    src: local('Pateglamt Script'), url('font/PateglamtScriptdemoversion.otf') format('truetype');
 }
 
 body {
