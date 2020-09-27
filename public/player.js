@@ -413,6 +413,7 @@ class Player {
         }
       });
       this.times.arena = Date.parse(new Date());
+      await updateTimes();
       this.saveState();
       await fetch("/arenaTime", {
         method: "POST",
@@ -424,7 +425,6 @@ class Player {
           "time": this.times.arena,
         })
       });
-      await updateTimes();
     }
   }
 
@@ -465,6 +465,7 @@ class Player {
         });
       }
     }
+    await updateTimes();
   }
 
   attack(others) {

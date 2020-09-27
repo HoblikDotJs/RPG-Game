@@ -300,6 +300,7 @@ async function updateTimes(str) { // server
 		times.questM = Math.floor(time / 60);
 		times.questS = Math.floor(time - times.questM * 60);
 	}
+	updateTimesClient();
 }
 
 function updateTimesClient(str) { // client
