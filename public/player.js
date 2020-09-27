@@ -98,8 +98,8 @@ class Player {
     }
   }
 
-  updateShopItems() {
-    fetch("/shopItemsUpdate", {
+  async updateShopItems() {
+    await fetch("/shopItemsUpdate", {
       method: "POST",
       headers: {
         'Content-Type': 'application/json'
@@ -109,6 +109,7 @@ class Player {
         "items": this.shopItems,
       })
     });
+    await updateTimes();
   }
 
   async buyFromShop(index) {

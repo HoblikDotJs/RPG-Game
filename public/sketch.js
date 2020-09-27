@@ -59,6 +59,7 @@ function loadWorld() {
 	$("#shopSel").empty();
 	$("#selector").empty();
 	blank();
+	//updateTimesClient();
 	let parent = $("#buttons");
 	screenButtons.signout = $("<button class='btn btn-dark' id='signoutButt'>Sign Out</button>").click(signOut);
 	screenButtons.arenaBtn = $("<button class='btn btn-dark' id='arenaButt'>Arena</button>").click(arenaFight);

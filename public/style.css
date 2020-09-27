@@ -1,10 +1,10 @@
 @font-face {
-    font-family: 'Pateglamt Script';
-    src: local('Pateglamt Script'), url('font/PateglamtScriptdemoversion.otf') format('truetype');
+    font-family: 'Merriweather Script';
+    src: local('Merriweather Script'), url('font/Merriweather-Light.ttf') format('truetype');
 }
 
 body {
-    font-family: "Pateglamt Script";
+    font-family: "Merriweather Script";
     background-image: url("images/blank.jpg");
     background-repeat: no-repeat;
     background-size: 1920px 1080px;
@@ -31,7 +31,7 @@ ul {
     background-color: #575757;
     width: 115px;
     height: 44px;
-    font-size: 25px;
+    font-size: 20px;
 }
 
 .btn-success {
