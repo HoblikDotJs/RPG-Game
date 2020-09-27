@@ -167,7 +167,7 @@ function fightMonsters() {
 	} else {
 		blank();
 		addBackButton();
-		changeBackground("images/screens/L1.jpg");
+		changeBackground("images/screens/L2.jpg");
 		$("#screen").append($("<center><p id='pbTime' style=''></p></center>"));
 		$("#screen").append(progressBarCode);
 		updateMonstersWaitingScreen();
