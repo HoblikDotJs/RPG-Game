@@ -13,7 +13,7 @@ ref.once("value", function (snapshot) {
 });
 const express = require("express");
 const app = express()
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 8080;
 app.listen(port, () => {
     console.log(`Listening at port ${port}`);
 });
@@ -82,12 +82,14 @@ app.post("/signup", (request, response) => {
 app.post("/times", (request, response) => {
     let found = false;
     console.log("New times update!");
-    console.log("Id is:" + request.body.id);
+    //console.log("Id is:" + request.body.id);
     for (let user in db) {
         if (db[user].password == request.body.id) {
             response.json(db[user].times);
             // console.log("It was: " + user);
             found = true;
+            console.log("SAVING DB")
+            database.ref().set(db)
         }
     }
     if (!found) response.json("undefined");
@@ -229,7 +231,7 @@ app.post("/getState", (request, response) => {
             data["upgradeCharacter"] = db[user].upgradeCharacter
             data["gold"] = db[user].gold
             data["character"] = db[user].character
-            data["message"] = db[user]
+            //   data["message"] = db[user]
             data["lvl"] = db[user].lvl
             data["xp"] = db[user].xp
             data["bossLvl"] = db[user].bossLvl
