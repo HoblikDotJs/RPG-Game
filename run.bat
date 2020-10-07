@@ -1,2 +1,2 @@
-start chrome http://localhost:5000
-nodemon index.js
+start chrome http://localhost:8080
+node app.js
