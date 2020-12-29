@@ -9,7 +9,10 @@ body {
     background-repeat: no-repeat;
     background-size: 1920px 1080px;
     font-size: 22px;
+    height: 100vh;
+    cursor: url("images/cursor3.cur"), default;
 }
+
 
 p {
     margin: 0%;
@@ -40,4 +43,44 @@ ul {
     width: 115px;
     height: 44px;
     font-size: 25px;
+}
+
+/* <POP UP> */
+.full-screen {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+}
+
+.flex-container-center {
+    displaY: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.full-screen {
+    color: white
+}
+
+.hidden {
+    display: none;
+}
+
+button:hover {
+    cursor: url("images/cursor3.cur"), default;
+}
+
+/* </POPUP> */
+/*no copy text*/
+.no-copy {
+    user-drag: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-drag: none;
 }

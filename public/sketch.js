@@ -81,6 +81,7 @@ function loadWorld() {
 	parent.append(screenButtons.fameBtn);
 	parent.append(screenButtons.questBtn);
 	parent.append(screenButtons.showShopBtn);
+	document.querySelector('.full-screen').classList.add('hidden');
 }
 
 
@@ -133,7 +134,7 @@ function showQuests() {
 // fight in arena
 async function arenaFight() {
 	blank();
-	changeBackground("images/screens/blank.jpg");
+	changeBackground("images/screens/arena.png");
 	await updateTimes();
 	if ((!times.arenaM && !times.arenaS) || (times.arenaM == 0 && times.arenaS == 0)) {
 		// fight
@@ -162,10 +163,11 @@ async function arenaFight() {
 // fight the next monster 
 function fightMonsters() {
 	blank();
-	changeBackground("images/screens/blank.jpg");
-	if ((!times.monsterS && !times.monsterM) || (times.monsterM == 0 && times.monsterS == 0)) {
-		player.fightNext();
-	} else {
+	changeBackground("images/screens/arena.png");
+	//if ((!times.monsterS && !times.monsterM) || (times.monsterM == 0 && times.monsterS == 0)) {
+	player.fightNext();
+}
+/* else {
 		blank();
 		addBackButton();
 		changeBackground("images/screens/L2.jpg");
@@ -182,7 +184,7 @@ function fightMonsters() {
 			loadingTimeout = setTimeout(updateMonstersWaitingScreen, 1000);
 		}
 	}
-}
+}       */
 
 //-----------------------------------------------------------------------------------------
 // 							HELPING FUNCTIONS

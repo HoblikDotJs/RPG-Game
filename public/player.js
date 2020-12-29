@@ -69,7 +69,7 @@ class Player {
       let num = 3;
       if (Math.random() > 0.4) {
         this.shopItems.push(weapons["potions"]["Hp Potion"]);
-        console.log("ADDING POTION")
+        // console.log("ADDING POTION")
         num--;
       }
       if (shoppingWeapons.length > num) {
@@ -160,7 +160,7 @@ class Player {
     if (newTime - oldTime > this.onQuest) {
       if (this.onQuest) { // player finished the quest and now its fight time!
         blank();
-        changeBackground("images/screens/blank.jpg");
+        changeBackground("images/screens/arena.png");
         for (let q in this.questAvailable) {
           if (this.questAvailable[q].sel) {
             await this.getState();
@@ -170,7 +170,7 @@ class Player {
         }
       } else { // selecting a quest and quests are shown
         blank();
-        changeBackground("images/screens/blank.jpg");
+        changeBackground("images/screens/blank.jpg"); //pub.png
         addBackButton();
         let quests;
         if (this.questAvailable.length != 3) {
@@ -217,7 +217,7 @@ class Player {
               $("#des").html(quests[selected].description);
               $("#xpRew").html(quests[selected].xpReward + " xp");
               $("#goldRew").html(quests[selected].goldReward + " <img src='images/gold.png' height='15'>");
-              $("#questTime").html(quests[selected].time / 60000 + " min");
+              $("#questTime").html((quests[selected].time / 60000).toFixed(0) + " min");
             }));
         }
         $("#questDescription").append(
@@ -346,6 +346,24 @@ class Player {
       resolve(true);
     })
   }
+  /* TODO:
+    async putOnSpell(object) {
+      if (this.spellSlot.indexOf(object) != -1 && object != undefined) {
+        await this.getState();
+        let prevItem = this.slots[object.slot];
+        this.slots[object.slot] = object;
+        this.backpack.splice(this.backpack.indexOf(object), 1);
+        this.backpack.push(prevItem);
+        this.calculateCharacter();
+        // console.log("You just putted " + object.name + " on.");
+        console.log(this.character);
+        console.log(this.slots);
+        this.saveState();
+        changeInvItem();
+        showCharacter();
+      }
+    }
+  */
 
   async putOn(object) {
     if (this.backpack.indexOf(object) != -1 && object != undefined) {
@@ -433,7 +451,7 @@ class Player {
     await this.getState();
     let oldDate = times.monster;
     let thisDate = Date.parse(new Date());
-    if (thisDate - oldDate > 600000 * 6) {
+    if (true) { //thisDate - oldDate > 600000 * 6
       if (this.bossLvl >= enemies.length) {
         console.log("No enemies left");
       } else {
@@ -488,10 +506,17 @@ class Player {
       myHpBarCreate();
       roundTimeBarCreate();
       enemyHpBarCreate();
+      enemyImageCreate("abaddon_the_sin_of_wrath");
+
+      function enemyImageCreate(name) {
+        $("#screen").append(
+          $(`<img src="images/boss/${name}.png" style="margin-top:-660px;width:1010px;height:822px;margin-left:130px">`)
+        );
+      }
 
       function myHpBarCreate() {
         $("#screen").append(
-          $(`<div class="progress" id="myHpText" style="width:300px; height:30px; margin: auto;margin-top:15px;">
+          $(`<div class="progress" id="myHpText" style='margin-top:83px;margin-left:1352px;width:400px; height:40px;'>
                 <div class="progress-bar" id="myHpB" style="width:100%;  background-color: DarkSeaGreen; aria-valuemin ="0";aria-valuemax="100"">
                 </div>
              </div>`)
@@ -500,7 +525,7 @@ class Player {
 
       function enemyHpBarCreate() {
         $("#screen").append(
-          $(`<div class="progress" id="EnemyHpText" style="width:300px; height:30px; margin: auto;margin-top:15px;"> 
+          $(`<div class="progress" id="EnemyHpText" style='margin-top:40px;margin-left:1352px;width:400px; height:40px;'"> 
                <div class="progress-bar" id="enemyHpB" style="width:100%; background-color: Crimson; aria-valuemin ="0";aria-valuemax="100"">
                </div>
             </div>`)
@@ -509,7 +534,7 @@ class Player {
 
       function roundTimeBarCreate() {
         $("#screen").append(
-          $(`<div class="progress" style="width:300px; height:30px; margin: auto;margin-top:15px;">
+          $(`<div class="progress" style='margin-top:40px;margin-left:1352px;width:400px; height:40px;'>
                 <div class="progress-bar" id="roundTimeBar" style="width:100%; background-color: Gray; aria-valuemin ="0";aria-valuemax="100"">
                 </div>
              </div>`)
@@ -517,7 +542,7 @@ class Player {
       }
 
       function regenButtonCreate() {
-        regenBtn = $("<button>REGEN (" + player.potions + ")</button>")
+        regenBtn = $("<button style='margin-top:41px;margin-left:1352px;width:400px'>REGEN (" + player.potions + ")</button><br>")
           .click(() => {
             if (!END && player.potions > 0) {
               player.potions--;
@@ -541,7 +566,7 @@ class Player {
       }
 
       function spellButtonCreate() {
-        spellBtn = $("<button>SPELL</button>")
+        spellBtn = $("<button style='margin-top:41px;margin-left:1352px;width:400px'>SPELL</button>")
           .click(() => {
             if (!END) {
               timeOnBar = -1;
@@ -564,7 +589,7 @@ class Player {
       }
 
       function attackButtonCreate() {
-        attackBtn = $("<button>ATTACK</button>")
+        attackBtn = $("<button style='margin-top:290px;margin-left:1352px;width:400px'>ATTACK</button><br>")
           .click(() => {
             if (!END) {
               timeOnBar = -1;
@@ -663,22 +688,28 @@ class Player {
         if ((myHp <= 0 || enemyHp <= 0) && !END) {
           timeInterval = clearInterval(timeInterval);
           timeOut = clearTimeout(timeOut);
-          attackBtn.remove();
-          regenBtn.remove();
-          spellBtn.remove();
-          addBackButton();
           END = true;
           if (myHp <= 0) {
-            $("#screen").append("<b><p>YOU LOST</p></b>")
+            showPopup(false);
             console.log("You lost");
             resolve(false);
           }
           if (enemyHp <= 0) {
-            $("#screen").append("<b><p>YOU WON</p></b>")
+            showPopup(true);
             console.log("You won");
             resolve(true);
           }
         }
+      }
+
+      function showPopup(won) { //bool
+        const popup = document.querySelector('.full-screen');
+        if (won) {
+          popup.innerHTML = "<p class='no-copy'>You won!</p><br><button class='btn btn-dark' id='bb' onclick='loadWorld()'>Back</button>";
+        } else {
+          popup.innerHTML = "<p class='no-copy'>You lost!</p><br><button class='btn btn-dark no-copy' id='bb' onclick='loadWorld()'>Back</button>";
+        }
+        popup.classList.remove('hidden');
       }
 
       function setT() {
