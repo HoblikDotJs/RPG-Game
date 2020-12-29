@@ -1,5 +1,6 @@
 let invSelected;
 let spellSelected;
+
 function showPlayer() {
   blank();
   addBackButton();
@@ -7,22 +8,22 @@ function showPlayer() {
   invSelected = 0;
   spellSelected = 0;
   let parent = $(`
-  <div class='container' style='margin-top:150px; margin-left:215px'>
+  <div class='container' style='margin-top:13.88vh; margin-left:11.1979vw'>
     <div class='row' id='main'>
-      <div class='col-lg-4' id='stats' style='position:absolute;padding:0px;width:440px;'>
-        <div class='row' id='items' style="border:solid gray; height:621px; width:440px;">
+      <div class='col-lg-4' id='stats' style='position:absolute;padding:0vw;width:22.916vw;'>
+        <div class='row' id='items' style="border:solid gray; height:57.5vh; width:22.916vw;">
         </div>
-        <div class='row' id='itemBtns' style="margin-top:8px; margin-left:-15px; margin-right:0px;">
-        </div>
-      </div>
-      <div class='col-lg-4' id='me' style='position: absolute; margin-left: 470px;padding-left:0px'>
-        <div class='row' id='meStats' style="border:solid black 3px; height: 675px; width: 581px;">
+        <div class='row' id='itemBtns' style="margin-top:0.7407vh; margin-left:-0.78vw; margin-right:0vw;">
         </div>
       </div>
-      <div class='col-lg-4' id='spells' style='position: absolute; margin: 0 0 0 1080px;padding:0px; width:440px;'>
-        <div class='row' id='meSpells' style="border:solid gray; height: 621px; width: 440px; ">
+      <div class='col-lg-4' id='me' style='position: absolute; margin-left: 24.47vw;padding-left:0vw'>
+        <div class='row' id='meStats' style="border:solid black 0.156vw; height: 62.5vh; width: 30.26vw;">
         </div>
-        <div class='row' id='spellBtns' style="margin-top:8px; margin-left:-15px;">
+      </div>
+      <div class='col-lg-4' id='spells' style='position: absolute; margin: 0 0 0 56.25vw;padding: 0vw; 22.916vw;'>
+        <div class='row' id='meSpells' style="border:solid gray; height: 57.5vh; width: 22.916vw; ">
+        </div>
+        <div class='row' id='spellBtns' style="margin-top:0.7407vh; margin-left:-0.78vw;">
         </div>
       </div>
     </div>
@@ -41,27 +42,27 @@ function showPlayer() {
   showCharacter();
 }
 
-function changeSpell(){
+function changeSpell() {
   let parent = $("#meSpells");
   parent.empty();
   let selectedItem = player.spellSlot[spellSelected];
-  parent.append($("<center><b><p style='height:55px; font-size:25px;width:440px'>" + selectedItem.name + "</p></b></center>"));
-  parent.append($("<center><p style='height:55px; font-size:25px;width:440px'>" + "Damage: " + selectedItem.damage + "</p></center>"));
+  parent.append($("<center><b><p style='height:5.0925vh; font-size:2.3148vh;width:22.916vw'>" + selectedItem.name + "</p></b></center>"));
+  parent.append($("<center><p style='height:5.0925vh; font-size:2.3148vh;width:22.916vw'>" + "Damage: " + selectedItem.damage + "</p></center>"));
 }
 
 function showCharacter() {
   let parent = $("#meStats");
   parent.empty();
-  parent.append($("<center><b><p style='height:45px; font-size:25px;width: 581px'>" + player.name + "</p></b></center>"));
-  parent.append($("<center><p style='height:32px; font-size:17px;width: 581px'>" + "Lvl: " + player.lvl + "</p></center>"));
-  parent.append($("<center><p style='height:32px; font-size:17px;width: 581px'>" + player.gold + "  <img src='images/gold.png' height='17px'> </p></center>"));
+  parent.append($("<center><b><p style='height:4.166vh; font-size:2.3148vh;width: 30.26vw'>" + player.name + "</p></b></center>"));
+  parent.append($("<center><p style='height:2.9629vh; font-size:1.574vh;width: 30.26vw'>" + "Lvl: " + player.lvl + "</p></center>"));
+  parent.append($("<center><p style='height:2.9629vh; font-size:1.574vh;width: 30.26vw'>" + player.gold + "  <img src='images/gold.png' height='1.574vh'> </p></center>"));
   for (let property in player.character) {
     parent.append(
-      $('<center><p style="height:32px; font-size:17px;width: 581px">' + con(property) + ": " + player.character[property] + '</p></center>')
+      $('<center><p style="height:2.9629vh; font-size:1.574vh;width: 30.26vw">' + con(property) + ": " + player.character[property] + '</p></center>')
     );
   }
   for (let slot in player.slots) {
-    parent.append($("<center><p style='height:32px; font-size:17px;width: 581px'> " + con(slot) + ": " + player.slots[slot].name + "</p></center>"))
+    parent.append($("<center><p style='height:2.9629vh; font-size:1.574vh;width: 30.26vw'> " + con(slot) + ": " + player.slots[slot].name + "</p></center>"))
   }
 }
 
@@ -69,12 +70,12 @@ function changeInvItem() {
   let parent = $("#items");
   parent.empty();
   let selectedItem = player.backpack[invSelected];
-  parent.append($("<center><b><p style='height:55px; font-size:25px;width:440px'>" + selectedItem.name + "</p></b></center>"));
-  parent.append($("<center><p style='height:50px; font-size:20px;width:440px'>" + "Slot: " + con(selectedItem.slot) + "</p></center>"));
-  parent.append($("<center><p style='height:50px; font-size:20px;width:440px'>" + "Price: " + selectedItem.price + " <img src='images/gold.png' height='17px'> </p></center>"));
+  parent.append($("<center><b><p style='height:5.0925vh; font-size:2.3148vh;width:22.916vw'>" + selectedItem.name + "</p></b></center>"));
+  parent.append($("<center><p style='height:4.6296vh; font-size:1.85vh;width:22.916vw'>" + "Slot: " + con(selectedItem.slot) + "</p></center>"));
+  parent.append($("<center><p style='height:4.6296vh; font-size:1.85vh;width:22.916vw'>" + "Price: " + selectedItem.price + " <img src='images/gold.png' height='1.574vh'> </p></center>"));
   for (let property in selectedItem.properties) {
     parent.append(
-      $('<center><p style="height:50px; font-size: 20px;width:440px">' + con(property) + ": " + selectedItem.properties[property] + '</p></center>')
+      $('<center><p style="height:4.6296vh; font-size: 1.85vh;width:22.916vw">' + con(property) + ": " + selectedItem.properties[property] + '</p></center>')
     );
   }
 }
@@ -89,7 +90,7 @@ function backwardIBtn() {
 }
 
 function forwardIBtn() {
-  $("#itemBtns").append($("<button class='btn btn-dark' style='margin-left:45px; '> -> </button>")
+  $("#itemBtns").append($("<button class='btn btn-dark' style='margin-left:2.34375vw; '> -> </button>")
     .click(() => {
       invSelected++;
       if (invSelected > player.backpack.length - 1) invSelected = 0;
@@ -98,7 +99,7 @@ function forwardIBtn() {
 }
 
 function putOnButton() {
-  screenButtons.putOnBtn = $("<button class='btn btn-dark' style='margin-left:50px;'>Equip</button>")
+  screenButtons.putOnBtn = $("<button class='btn btn-dark' style='margin-left:4.6296vh;'>Equip</button>")
     .appendTo("#itemBtns");
   screenButtons.putOnBtn.click(async () => {
     await player.putOn(player.backpack[invSelected]);
@@ -106,7 +107,7 @@ function putOnButton() {
 }
 // SPELLS
 function backwardSpellBtn() {
-  $("#spellBtns").append($("<button class='btn btn-dark' style='margin-left:0px;width:100px;'> <- </button>")
+  $("#spellBtns").append($("<button class='btn btn-dark' style='margin-left:0vw;width:5.20833vw;'> <- </button>")
     .click(() => {
       spellSelected--;
       if (spellSelected < 0) spellSelected = player.spellSlot.length - 1;
@@ -115,14 +116,14 @@ function backwardSpellBtn() {
 }
 
 function putOnSpellButton() {
-  $("#spellBtns").append($("<button class='btn btn-dark' style='margin-left:13px;width:100px;'>Equip</button>")
+  $("#spellBtns").append($("<button class='btn btn-dark' style='margin-left:0.677vw;width:5.20833vw;'>Equip</button>")
     .click(async () => {
       await player.putOnSpell(player.spellSlot[spellSelected]);
     }));
 }
 
 function upgradeSpellButton() {
-  $("#spellBtns").append($("<button class='btn btn-dark' style='margin-left:14px;width:100px;'> + </button>")
+  $("#spellBtns").append($("<button class='btn btn-dark' style='margin-left:0.729vw;width:5.20833vw;'> + </button>")
     .click(() => {
 
     }));
@@ -130,7 +131,7 @@ function upgradeSpellButton() {
 
 
 function forwardSpellBtn() {
-  $("#spellBtns").append($("<button class='btn btn-dark' style='margin-left:13px;width:100px;'> -> </button>")
+  $("#spellBtns").append($("<button class='btn btn-dark' style='margin-left:0.677vw;width:5.20833vw;'> -> </button>")
     .click(() => {
       spellSelected++;
       if (spellSelected > player.spellSlot.length - 1) spellSelected = 0;

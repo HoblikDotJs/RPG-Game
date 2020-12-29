@@ -5,17 +5,17 @@ function redirectToShop() {
   changeBackground("images/screens/shop.jpg");
   addBackButton();
   selected = 0;
-  let parent = $(`<div class='container' style='margin-top:225px;'>
-                      <div class='row' id='shopItem'></div>
-                      <div id='shopBtns'style='margin-top:572px;'class='row'></div>
+  let parent = $(`<div style='margin-top:21vh;'>
+                      <div id='shopItem' style="margin-left:16.166vw"></div>
+                      <div id='shopBtns'style='margin-top:1vh;'></div>
                   </div>`);
   $("#screen").append(parent);
   $("#shopItem").append(
-    $("<div class='col-lg-6' id='itemStats' style='position: absolute; height:560px; width:560px;margin-left:-80px'></div>")
+    $("<div id='itemStats' style='height:51.85vh; width:29.166vw'></div>")
   );
   $("#shopItem").append(
-    $(`<div class='col-lg-6' id='itemImg' style='position: absolute; height:560px; width:560px; margin-left:635px;'>
-         <img id='itemImagePNG' width='560' height='560' style='margin-left:-15px'>
+    $(`<div id='itemImg' style='height:51.85vh; width:29.166vw; margin-left:38.0729vw; margin-top:-52vh'>
+         <img id='itemImagePNG' style='margin-left:-0.78vw;width:29.166vw;height:51.851vh'>
       </div>`)
   );
   changeSelItem();
@@ -39,36 +39,35 @@ function changeSelItem() {
   if (player.shopItems[selected].price >= 500000) titleColor = "DeepPink"
 
   parent.append(
-    $("<center><b><p style='height:65px; font-size: 40px; margin-top:15px;'>" + itemName + "</p></b></center>")
+    $("<center><b><p style='height:6.018vh; font-size: 3.703vh; margin-top:1.388vh;'>" + itemName + "</p></b></center>")
     .css("color", titleColor)
   );
 
   parent.append(
-    $("<center><p style='height:52px; font-size: 29px'>" + "Slot: " + itemSlot + "</p></center>")
+    $("<center><p style='height:4.8148vh; font-size: 2.6851vh'>" + "Slot: " + itemSlot + "</p></center>")
   );
 
-  let itemPriceHTML = $("<center><p style='height:52px; font-size: 29px'>" + "Price: " + itemPriceValue + " <img src='images/gold.png' height='29' ><center>");
+  let itemPriceHTML = $("<center><p style='height:4.8148vh; font-size: 2.6851vh'>" + "Price: " + itemPriceValue + " <img src='images/gold.png' height='29' ><center>");
   parent.append(itemPriceHTML);
   $("#itemImagePNG").attr("src", 'images/items/' + itemName + '.png');
   (player.gold >= player.shopItems[selected].price) ? itemPriceHTML.css('color', 'Chartreuse'): itemPriceHTML.css('color', 'red');
 
   for (let property in player.shopItems[selected].properties) {
     let propertyVal = player.shopItems[selected].properties[property]
-    parent.append($('<center><p style="height:52px; font-size: 29px " >' + con(property) + ": " + propertyVal + '</p></center>'));
+    parent.append($('<center><p style="height:4.8148vh; font-size: 2.6851vh" >' + con(property) + ": " + propertyVal + '</p></center>'));
   }
 
   if (player.shopItems[selected].sold == true) {
     itemPriceHTML.html("SOLD")
       .css("color", "red")
-      .css("font-size", "29px")
-      .css("height", "52px")
+      .css("font-size", "2.6851vh")
+      .css("height", "4.8148vh")
   }
 }
 
 function forwardSBtn() {
   $("#shopBtns").append(
-    $("<button class='btn btn-dark' style='margin-left:1080px'> -> </button>")
-    .css('position', 'absolute')
+    $("<button class='btn btn-dark' style='margin-left:76.8vw;margin-top:-4.7vh'> -> </button>")
     .click(() => {
       selected++;
       if (selected > player.shopItems.length - 1) selected = 0;
@@ -78,8 +77,7 @@ function forwardSBtn() {
 }
 
 function backwardSBtn() {
-  $("#shopBtns").append($("<button class='btn btn-dark' style='margin-left:-82px'> <- </button>")
-    .css('position', 'absolute')
+  $("#shopBtns").append($("<button class='btn btn-dark' style='margin-left:16vw'> <- </button>")
     .click(() => {
       selected--;
       if (selected < 0) selected = player.shopItems.length - 1;
@@ -93,16 +91,14 @@ function showShop() {
 }
 
 function buyButton() {
-  $("#shopBtns").append($("<button class='btn btn-dark' style='margin-left:366px'>Buy</button>")
-    .css('position', 'absolute')
+  $("#shopBtns").append($("<button class='btn btn-dark' style='margin-left:39.5vw;margin-top:-4.7vh'>Buy</button>")
     .appendTo("#shopBtns").click(() => {
       player.buyFromShop(selected);
     }));
 }
 
 function reloadShopBtn() {
-  $("<button id='reloadShop' class='btn btn-dark' style='margin-left:631px'>Reload</button>")
-    .css('position', 'absolute')
+  $("<button id='reloadShop' class='btn btn-dark' style='margin-left:53.3vw;margin-top:-4.7vh'>Reload</button>")
     .appendTo("#shopBtns")
     .mouseover(showShopTime)
     .mouseout(showShopTitle)

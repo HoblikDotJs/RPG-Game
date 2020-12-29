@@ -7,8 +7,8 @@ body {
     font-family: "Merriweather Script";
     background-image: url("images/screens/blank.jpg");
     background-repeat: no-repeat;
-    background-size: 1920px 1080px;
-    font-size: 22px;
+    background-size: 100vw 100vh;
+    font-size: 1.145vw;
     height: 100vh;
     cursor: url("images/cursor3.cur"), default;
 }
@@ -25,24 +25,25 @@ ul {
 
 #pbTime {
     margin-top: 42%;
-    font-size: 48px;
+    font-size: 2.5vw;
     color: rgb(220, 150, 50, 0.8);
 }
 
 .btn-dark {
     display: block;
     background-color: #575757;
-    width: 115px;
-    height: 44px;
-    font-size: 20px;
+    width: 5.9vw;
+    height: 4.7vh;
+    font-size: 1.04vw;
+    white-space: nowrap;
 }
 
 .btn-success {
     background-color: DarkSeaGreen;
     display: block;
-    width: 115px;
-    height: 44px;
-    font-size: 25px;
+    width: 5.9vw;
+    height: 4.7vh;
+    font-size: 1.04vw;
 }
 
 /* <POP UP> */

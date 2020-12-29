@@ -144,8 +144,8 @@ async function arenaFight() {
 		blank();
 		addBackButton();
 		changeBackground("images/screens/L2.jpg");
-		$("#screen").append($("<center><p id='pbTime' style=''></p></center>"));
-		$("#screen").append(progressBarCode);
+		$("#screen").append($("<center style='margin-top:-10vh'><p id='pbTime' style=''></p></center>"));
+		$("#screen").append(progressBarCode)
 		updateArenaWaitingScreen();
 
 		function updateArenaWaitingScreen() {
@@ -153,6 +153,7 @@ async function arenaFight() {
 			let min = times.arenaM;
 			let remaining = (1 - ((min * 60 + sec) / 600)) * 100;
 			$("#pb").css("width", remaining + "%");
+
 			$("#pbTime").html(min + " : " + sec);
 			loadingTimeout = setTimeout(updateArenaWaitingScreen, 1000);
 		}

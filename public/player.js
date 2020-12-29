@@ -510,13 +510,13 @@ class Player {
 
       function enemyImageCreate(name) {
         $("#screen").append(
-          $(`<img src="images/boss/${name}.png" style="margin-top:-660px;width:1010px;height:822px;margin-left:130px">`)
+          $(`<img src="images/boss/${name}.png" style="margin-top:-42.5vh;width:54.5vw;height:78vh;margin-left:6.77vw">`)
         );
       }
 
       function myHpBarCreate() {
         $("#screen").append(
-          $(`<div class="progress" id="myHpText" style='margin-top:83px;margin-left:1352px;width:400px; height:40px;'>
+          $(`<div class="progress" id="myHpText" style='margin-top:5.7vh;margin-left:70.416vw;width:20.8vw; height:3.7vh;'>
                 <div class="progress-bar" id="myHpB" style="width:100%;  background-color: DarkSeaGreen; aria-valuemin ="0";aria-valuemax="100"">
                 </div>
              </div>`)
@@ -525,7 +525,7 @@ class Player {
 
       function enemyHpBarCreate() {
         $("#screen").append(
-          $(`<div class="progress" id="EnemyHpText" style='margin-top:40px;margin-left:1352px;width:400px; height:40px;'"> 
+          $(`<div class="progress" id="EnemyHpText" style='margin-top:3.7vh;margin-left:70.416vw;width:20.8vw; height:3.7vh;'"> 
                <div class="progress-bar" id="enemyHpB" style="width:100%; background-color: Crimson; aria-valuemin ="0";aria-valuemax="100"">
                </div>
             </div>`)
@@ -534,7 +534,7 @@ class Player {
 
       function roundTimeBarCreate() {
         $("#screen").append(
-          $(`<div class="progress" style='margin-top:40px;margin-left:1352px;width:400px; height:40px;'>
+          $(`<div class="progress" style='margin-top:3.7vh;margin-left:70.416vw;width:20.8vw; height:3.7vh;'>
                 <div class="progress-bar" id="roundTimeBar" style="width:100%; background-color: Gray; aria-valuemin ="0";aria-valuemax="100"">
                 </div>
              </div>`)
@@ -542,7 +542,7 @@ class Player {
       }
 
       function regenButtonCreate() {
-        regenBtn = $("<button style='margin-top:41px;margin-left:1352px;width:400px'>REGEN (" + player.potions + ")</button><br>")
+        regenBtn = $("<button style='margin-top:3.796vh;margin-left:70.416vw;width:20.83vw;height:3.6vh'>REGEN (" + player.potions + ")</button><br>")
           .click(() => {
             if (!END && player.potions > 0) {
               player.potions--;
@@ -566,7 +566,7 @@ class Player {
       }
 
       function spellButtonCreate() {
-        spellBtn = $("<button style='margin-top:41px;margin-left:1352px;width:400px'>SPELL</button>")
+        spellBtn = $("<button style='margin-top:3.796vh;margin-left:70.4vw;width:20.833vw;height:3.6vh'>SPELL</button>")
           .click(() => {
             if (!END) {
               timeOnBar = -1;
@@ -589,7 +589,7 @@ class Player {
       }
 
       function attackButtonCreate() {
-        attackBtn = $("<button style='margin-top:290px;margin-left:1352px;width:400px'>ATTACK</button><br>")
+        attackBtn = $("<button style='margin-top:10vh;margin-left:70.4166vw;width:20.833vw;height:3.6vh'>ATTACK</button><br>")
           .click(() => {
             if (!END) {
               timeOnBar = -1;
@@ -667,8 +667,8 @@ class Player {
         $("#enemyHpB").css("width", enemyRemainingHp + "%");
         let myRemainingHp = (myHp / me.character.hp) * 100
         $("#myHpB").css("width", myRemainingHp + "%");
-        $("#myHpB").html("<b><p style='color:black;font-size:25px'>" + myHp + "</p></b>");
-        $("#enemyHpB").html("<b><p style='color:black;font-size:25px'>" + enemyHp + "</p></b>");
+        $("#myHpB").html("<b><p style='color:black;font-size:2.314vh'>" + myHp + "</p></b>");
+        $("#enemyHpB").html("<b><p style='color:black;font-size:2.314vh'>" + enemyHp + "</p></b>");
       }
 
       function checkIfDead() {
@@ -718,7 +718,7 @@ class Player {
             timeOnBar++;
             let w = 100 - ((timeOnBar / ((delay / 1000) - 1)) * 100)
             $("#roundTimeBar").css("width", w + "%");
-            $("#roundTimeBar").html("<b><p style='color:black;font-size:25px'>" + (5 - (timeOnBar + 1)) + "</p></b>");
+            $("#roundTimeBar").html("<b><p style='color:black;font-size:2.314vh'>" + (5 - (timeOnBar + 1)) + "</p></b>");
           }, 1000);
           timeOut = setTimeout(() => {
             attackBtn.trigger("click");
