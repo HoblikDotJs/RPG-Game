@@ -138,6 +138,7 @@ class Player {
           this.updateShopItems();
           this.saveState();
           changeSelItem();
+          showPopup("You bought " + item.name, false)
         }
       }
     }
@@ -488,6 +489,7 @@ class Player {
   }
 
   attack(others) {
+    showPopup("You got in fight with " + others.name, false);
     return new Promise((resolve) => {
       let timeInterval;
       let timeOnBar = -1
@@ -507,6 +509,24 @@ class Player {
       roundTimeBarCreate();
       enemyHpBarCreate();
       enemyImageCreate("abaddon_the_sin_of_wrath");
+      logCreate();
+      //
+      function writeToLogFriendly(str) {
+        $("#friendlyLog").html(`<p class="animate__animated animate__fadeOutUp" style="color:green;margin: auto">${str}</p>`);
+      }
+
+      function writeToLogEnemy(str) {
+        $("#enemyLog").html(`<p class="animate__animated animate__fadeOutUp" style="color:red;margin: auto">${str}</p>`);
+      }
+
+      function logCreate() {
+        $("#screen").append(
+          $(`<div style='margin-top:-29.9vh;margin-left:70.416vw;width:20.95vw; height:30vh;'>
+            <div id="friendlyLog" style="height:50%;display: flex; align-items: center;"></div>
+            <div id="enemyLog" style="height:50%;display: flex; align-items: center;"></div>               
+          </div>`)
+        );
+      }
 
       function enemyImageCreate(name) {
         $("#screen").append(
@@ -575,9 +595,11 @@ class Player {
               timeOut = false;
               if (parseInt(me.spellSlot[0].damage) - parseInt(enemy.character.magicResistance) / 2 > 0) {
                 enemyHp -= parseInt(me.spellSlot[0].damage) - parseInt(enemy.character.magicResistance) / 2;
+                writeToLogFriendly('Your spell hit');
                 console.log("SPELL DMG: " + (parseInt(me.spellSlot[0].damage) - parseInt(enemy.character.magicResistance) / 2));
               } else {
                 console.log("YOUR SPELL DMG: " + parseInt(me.spellSlot[0].damage), "ENEMY EfMR: " + parseInt(enemy.character.magicResistance) / 2);
+                writeToLogFriendly('You did nothing');
               }
               checkIfDead();
               enemyHit();
@@ -602,21 +624,25 @@ class Player {
                 let dmg = Math.floor((parseInt(me.character.damage) - parseInt(enemy.character.armor) / 2) * (r / 100 + 1));
                 myHp += parseInt(me.character.regen);
                 if (dmg > 0) {
+                  writeToLogFriendly('You did a critical hit');
                   enemyHp -= dmg;
                   console.log("YOUR CRIT DMG: " + dmg);
                   console.log("YOU REGENERATED: " + me.character.regen);
                 } else {
+                  writeToLogFriendly('You regenerated');
                   console.log("Your DMG: " + dmg, "His AfA: " + parseInt(enemy.character.armor) / 2);
                   console.log("YOU REGENERATED: " + me.character.regen);
                 }
               } else if (r < luck) { //NORMAL
                 if (parseInt(me.character.damage) - parseInt(enemy.character.armor) / 2 > 0) {
                   enemyHp -= parseInt(me.character.damage) - parseInt(enemy.character.armor) / 2;
+                  writeToLogFriendly('You hit');
                   console.log("YOUR ATTACK DMG: " + (parseInt(me.character.damage) - parseInt(enemy.character.armor) / 2));
                 } else {
                   console.log("YOUR DMG: " + parseInt(me.character.damage), "His EfA: " + parseInt(enemy.character.armor) / 2)
                 }
               } else { //MISS
+                writeToLogFriendly('You missed');
                 console.log("YOU MISSED");
               }
               checkIfDead();
@@ -639,9 +665,11 @@ class Player {
             enemyHp += parseInt(enemy.character.regen)
             if (dmg > 0) {
               myHp -= dmg;
+              writeToLogEnemy("Enemy had a crit hit");
               console.log("ENEMY CRIT DMG: " + dmg);
               console.log("ENEMY REGENERATED: " + parseInt(enemy.character.regen))
             } else {
+              writeToLogEnemy("Enemy regenerated");
               console.log("ENEMY DMG: " + dmg, "Your AfA: " + parseInt(me.character.armor) / 2);
               console.log("ENEMY REGENERATED: " + parseInt(enemy.character.regen))
             }
@@ -649,6 +677,7 @@ class Player {
             if (parseInt(enemy.character.damage) - parseInt(me.character.armor) / 2 > 0) {
               myHp -= parseInt(enemy.character.damage) - parseInt(me.character.armor) / 2;
               roundDmg = parseInt(enemy.character.damage) - parseInt(me.character.armor) / 2;
+              writeToLogEnemy("Enemy hit");
               console.log("ENEMY ATTACK DMG: " + (parseInt(enemy.character.damage) - parseInt(me.character.armor) / 2));
             } else {
               console.log("ENEMY DMG: " + parseInt(enemy.character.damage), "Your EfA: " + parseInt(me.character.armor) / 2)
@@ -656,6 +685,7 @@ class Player {
           } else { //
             roundDmg = "Missed";
             console.log("ENEMY MISSED");
+            writeToLogEnemy("Enemy missed");
           }
           fight_round += 1;
           console.log(`%cYour HP: ${myHp}` + `%c Enemy HP: ${enemyHp}` + `%c Round: ${fight_round}`,
@@ -672,16 +702,12 @@ class Player {
       }
 
       function checkIfDead() {
-        if (fight_round >= 100 && !END) {
+        if (fight_round >= 500 && !END) {
           timeInterval = clearInterval(timeInterval);
-          console.log("fightRounds");
           console.log("Its a draw");
+          showPopup("Its a draw");
           timeOut = clearTimeout(timeOut);
-          attackBtn.remove();
-          regenBtn.remove();
-          spellBtn.remove();
           addBackButton();
-          $("#screen").append("<b><p>Maximum rounds reached</p></b>")
           END = true;
           resolve(false);
         }
@@ -690,26 +716,16 @@ class Player {
           timeOut = clearTimeout(timeOut);
           END = true;
           if (myHp <= 0) {
-            showPopup(false);
+            showPopup("You lost");
             console.log("You lost");
             resolve(false);
           }
           if (enemyHp <= 0) {
-            showPopup(true);
+            showPopup("You won");
             console.log("You won");
             resolve(true);
           }
         }
-      }
-
-      function showPopup(won) { //bool
-        const popup = document.querySelector('.full-screen');
-        if (won) {
-          popup.innerHTML = "<p class='no-copy'>You won!</p><br><button class='btn btn-dark' id='bb' onclick='loadWorld()'>Back</button>";
-        } else {
-          popup.innerHTML = "<p class='no-copy'>You lost!</p><br><button class='btn btn-dark no-copy' id='bb' onclick='loadWorld()'>Back</button>";
-        }
-        popup.classList.remove('hidden');
       }
 
       function setT() {
@@ -754,4 +770,16 @@ class Player {
     }
     return false
   }
+}
+
+function showPopup(res, showBtn = true) {
+  const popup = document.querySelector('.full-screen');
+  let b;
+  if (showBtn) {
+    b = "<br><button class='btn btn-dark no-copy' id='bb' onclick='loadWorld()'>Back</button>"
+  } else {
+    b = `<br><button onclick="(()=>{document.querySelector('.full-screen').classList.add('hidden')})();" class='btn btn-dark no-copy'>Whatever</button>`
+  }
+  popup.innerHTML = "<p class='no-copy'>" + res + "</p>" + b;
+  popup.classList.remove('hidden');
 }
