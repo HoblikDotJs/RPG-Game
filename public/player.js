@@ -680,7 +680,8 @@ class Player {
               writeToLogEnemy("Enemy hit");
               console.log("ENEMY ATTACK DMG: " + (parseInt(enemy.character.damage) - parseInt(me.character.armor) / 2));
             } else {
-              console.log("ENEMY DMG: " + parseInt(enemy.character.damage), "Your EfA: " + parseInt(me.character.armor) / 2)
+              console.log("ENEMY DMG: " + parseInt(enemy.character.damage), "Your EfA: " + parseInt(me.character.armor) / 2);
+              writeToLogEnemy("Enemy did nothing")
             }
           } else { //
             roundDmg = "Missed";
