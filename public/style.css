@@ -4,8 +4,9 @@
 }
 
 body {
+    overflow: hidden;
     font-family: "Merriweather Script";
-    background-image: url("images/screens/blank.jpg");
+    background-image: url("images/screens/village.jpg");
     background-repeat: no-repeat;
     background-size: 100vw 100vh;
     font-size: 1.145vw;
@@ -21,6 +22,7 @@ p {
 ul {
     list-style-type: none;
 }
+
 
 #pbTime {
     margin-top: 42%;
@@ -75,6 +77,7 @@ button:hover {
 }
 
 /* </POPUP> */
+
 /*no copy text*/
 .no-copy {
     user-drag: none;
