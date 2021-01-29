@@ -30,9 +30,7 @@ let screenButtons = {
 }
 /*
 TODO:
-quests
 FIREBALL - UPGRADES ////
-ABSOLUTE POSITIONS
 QUESTS LAYOUT
 INVENTORY LAYOUT
 FAME TREE
@@ -41,7 +39,6 @@ FAME TREE
 //--------------------------------------------------------------------------------------------
 //                                   MAIN FUNCTION
 // loads weapons, when site loads
-
 function setup() {
 	$.getJSON("weapons.json", (json) => {
 		weapons = json;
@@ -59,6 +56,7 @@ function loadWorld() {
 	$("#shopSel").empty();
 	$("#selector").empty();
 	blank();
+	updateTimes();
 	//updateTimesClient();
 	let parent = $("#buttons");
 	screenButtons.signout = $("<button class='btn btn-dark' id='signoutButt'>Sign Out</button>").click(signOut);
@@ -83,8 +81,6 @@ function loadWorld() {
 	parent.append(screenButtons.showShopBtn);
 	document.querySelector('.full-screen').classList.add('hidden');
 }
-
-
 
 //---------------------------------------------------------------------------------------
 //                                       BUTTON CLICKS
@@ -144,8 +140,8 @@ async function arenaFight() {
 		blank();
 		addBackButton();
 		changeBackground("images/screens/L2.jpg");
-		$("#screen").append($("<center style='margin-top:-10vh'><p id='pbTime' style=''></p></center>"));
-		$("#screen").append(progressBarCode)
+		$("#screen").append($("<center><p id='pbTime' style=''></p></center>"));
+		$("#screen").append(progressBarCode);
 		updateArenaWaitingScreen();
 
 		function updateArenaWaitingScreen() {
@@ -153,7 +149,6 @@ async function arenaFight() {
 			let min = times.arenaM;
 			let remaining = (1 - ((min * 60 + sec) / 600)) * 100;
 			$("#pb").css("width", remaining + "%");
-
 			$("#pbTime").html(min + " : " + sec);
 			loadingTimeout = setTimeout(updateArenaWaitingScreen, 1000);
 		}
@@ -165,10 +160,9 @@ async function arenaFight() {
 function fightMonsters() {
 	blank();
 	changeBackground("images/screens/arena.png");
-	//if ((!times.monsterS && !times.monsterM) || (times.monsterM == 0 && times.monsterS == 0)) {
-	player.fightNext();
-}
-/* else {
+	if ((!times.monsterS && !times.monsterM) || (times.monsterM == 0 && times.monsterS == 0)) {
+		player.fightNext();
+	} else {
 		blank();
 		addBackButton();
 		changeBackground("images/screens/L2.jpg");
@@ -185,7 +179,7 @@ function fightMonsters() {
 			loadingTimeout = setTimeout(updateMonstersWaitingScreen, 1000);
 		}
 	}
-}       */
+}
 
 //-----------------------------------------------------------------------------------------
 // 							HELPING FUNCTIONS
@@ -233,7 +227,7 @@ function changeBackground(str) {
 	$("body").css("background-image", `url(${str})`);
 }
 
-//updates all times(quest time, arena time...) 
+//updates all times(quest time, arena time...) + fullscreen mode
 async function updateTimes(str) { // server
 	const options = {
 		method: "POST",
@@ -250,8 +244,23 @@ async function updateTimes(str) { // server
 		console.log("Failed to update times");
 		return;
 	}
-	if (str === "load") { // just for loading into the game 
+	if (str === "load") { // just for loading into the game
 		loadWorld();
+		//alert("Press f or F11 to enable fullscreen mode 😉");
+		document.onkeypress = function (e) {
+			if (e.key != "f") return
+			if (window.innerHeight == screen.height) return
+			var docelem = document.documentElement;
+			if (docelem.requestFullscreen) {
+				docelem.requestFullscreen();
+			} else if (docelem.mozRequestFullScreen) {
+				docelem.mozRequestFullScreen();
+			} else if (docelem.webkitRequestFullScreen) {
+				docelem.webkitRequestFullScreen();
+			} else if (docelem.msRequestFullscreen) {
+				docelem.msRequestFullscreen();
+			}
+		}
 		//setInterval(updateTimes, 1000);
 	}
 	let oldTime = serverTimes.monsters;
@@ -287,7 +296,6 @@ async function updateTimes(str) { // server
 	if (newTime - oldTime > 600000) {
 		times.arenaS = 0;
 		times.arenaM = 0;
-
 	} else {
 		let time = (600000 - (newTime - oldTime)) / 1000
 		times.arenaM = Math.floor(time / 60);
@@ -418,17 +426,3 @@ function con(str) {
 	}
 	return string;
 }
-/*
-function toggleFullScreen() {
-	var doc = window.document;
-	var docEl = doc.documentElement;
-
-	var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-	var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
-
-	if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-		requestFullScreen.call(docEl);
-	} else {
-		cancelFullScreen.call(doc);
-	}
-}*/

@@ -2,7 +2,7 @@ async function onSignIn(googleUser) {
     let profile = googleUser.getBasicProfile();
     const Id = profile.getId();
     if (Id) {
-        const options = {
+        const _ = await (await fetch("/login", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
@@ -10,12 +10,10 @@ async function onSignIn(googleUser) {
             body: JSON.stringify({
                 "id": Id
             })
-        }
-        const response = await fetch("/login", options);
-        const _ = await response.json()
+        })).json()
         if (_ == "undefined") {
             myName = prompt("What will be your nick? (without spaces)");
-            const options = {
+            const result = await (await fetch("/signup", {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json'
@@ -24,9 +22,7 @@ async function onSignIn(googleUser) {
                     "id": Id,
                     "name": myName,
                 })
-            }
-            const response = await fetch("/signup", options);
-            const result = await response.json()
+            })).json();
             if (result == "undefined") {
                 console.log("Bad username");
                 return

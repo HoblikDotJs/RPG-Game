@@ -116,7 +116,7 @@ class Player {
     let item = this.shopItems[index];
     if (!item.sold) {
       if (parseInt(this.gold) >= parseInt(item.price)) {
-        const response = await fetch("/shopBuy", {
+        const result = await (await fetch("/shopBuy", {
           method: "POST",
           headers: {
             'Content-Type': 'application/json'
@@ -125,8 +125,7 @@ class Player {
             "id": this.password,
             "price": item.price,
           })
-        });
-        const result = await response.json();
+        })).json();
         if (result == "True") {
           this.gold -= parseInt(item.price);
           if (item.slot != "potions") {
@@ -205,7 +204,7 @@ class Player {
         );
         //                  quest time
         $("#questDiv").append(
-          $("<div class='col-lg-4' id='questTimeDiv'><p id='questTime'>" + quests[selected].time / 60000 + " min </p></div>")
+          $("<div class='col-lg-4' id='questTimeDiv'><p id='questTime'>" + (quests[selected].time / 60000).toFixed(0) + " min </p></div>")
         );
         //                  quest gold reward
         $("#questDiv").append(
@@ -452,7 +451,7 @@ class Player {
     await this.getState();
     let oldDate = times.monster;
     let thisDate = Date.parse(new Date());
-    if (true) { //thisDate - oldDate > 600000 * 6
+    if (thisDate - oldDate > 600000 * 6) {
       if (this.bossLvl >= enemies.length) {
         console.log("No enemies left");
       } else {
@@ -508,7 +507,7 @@ class Player {
       myHpBarCreate();
       roundTimeBarCreate();
       enemyHpBarCreate();
-      enemyImageCreate("abaddon_the_sin_of_wrath");
+      enemyImageCreate("asmodeus the sin of lust");
       logCreate();
       //
       function writeToLogFriendly(str) {
