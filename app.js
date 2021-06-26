@@ -22,6 +22,7 @@ app.use(express.json({
     limit: "1mb"
 }));
 const weapons = JSON.parse(fs.readFileSync("public/weapons.json"))
+const noCooldowns = true;
 
 app.post("/login", (request, response) => {
     let found = false;
@@ -103,7 +104,9 @@ app.post("/shopRefresh", (request, response) => {
         if (db[user].password == request.body.id) {
             found = true;
             console.log("It was: " + user);
-            db[user].times.shop = request.body.time;
+            if (!noCooldowns) {
+                db[user].times.shop = request.body.time;
+            }
             response.end();
         }
     }
@@ -151,7 +154,9 @@ app.post("/arenaTime", (request, response) => {
         if (db[user].password == request.body.id) {
             found = true;
             console.log("It was: " + user);
-            db[user].times.arena = request.body.time;
+            if (!noCooldowns) {
+                db[user].times.arena = request.body.time;
+            }
             response.end();
         }
     }
@@ -166,7 +171,9 @@ app.post("/monsterTime", (request, response) => {
         if (db[user].password == request.body.id) {
             found = true;
             console.log("It was: " + user);
-            db[user].times.monsters = request.body.time;
+            if (!noCooldowns) {
+                db[user].times.monsters = request.body.time;
+            }
             console.log("SAVING DB")
             database.ref().set(db)
             response.end();
@@ -183,7 +190,9 @@ app.post("/questTime", (request, response) => {
         if (db[user].password == request.body.id) {
             found = true;
             console.log("It was: " + user);
-            db[user].times.quest = request.body.time;
+            if (!noCooldowns) {
+                db[user].times.quest = request.body.time;
+            }
             response.end();
         }
     }
@@ -275,14 +284,14 @@ app.post("/randomEnemyArena", (request, response) => {
     if (!found) response.end();
 
     function pickRandomEnemy(obj, me) {
-        let names = Object.keys(obj);
+        let objCopy = JSON.parse(JSON.stringify(obj));
+        delete objCopy[me]
+        let names = Object.keys(objCopy)
         let other = Math.floor(Math.random() * names.length);
         let index = names[other];
-        if (obj[index] == me) pickRandomEnemy(db, me)
-        return obj[index];
+        return objCopy[index]
     }
 })
-
 
 let baseCharacter = {
     hp: 150,

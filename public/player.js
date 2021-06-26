@@ -137,7 +137,10 @@ class Player {
           this.updateShopItems();
           this.saveState();
           changeSelItem();
-          showPopup("You bought " + item.name, false)
+          showPopup({
+            res: "You bought " + item.name,
+            showBtn: false
+          })
         }
       }
     }
@@ -488,7 +491,10 @@ class Player {
   }
 
   attack(others) {
-    showPopup("You got in fight with " + others.name, false);
+    showPopup({
+      res: "You got in fight with " + others.name,
+      showBtn: false
+    });
     return new Promise((resolve) => {
       let timeInterval;
       let timeOnBar = -1
@@ -705,7 +711,10 @@ class Player {
         if (fight_round >= 500 && !END) {
           timeInterval = clearInterval(timeInterval);
           console.log("Its a draw");
-          showPopup("Its a draw");
+          showPopup({
+            res: "Its a draw",
+            timeOut: 700,
+          });
           timeOut = clearTimeout(timeOut);
           addBackButton();
           END = true;
@@ -716,12 +725,18 @@ class Player {
           timeOut = clearTimeout(timeOut);
           END = true;
           if (myHp <= 0) {
-            showPopup("You lost");
+            showPopup({
+              res: "You lost",
+              timeOut: 700,
+            });
             console.log("You lost");
             resolve(false);
           }
           if (enemyHp <= 0) {
-            showPopup("You won");
+            showPopup({
+              res: "You won",
+              timeOut: 700,
+            });
             console.log("You won");
             resolve(true);
           }
@@ -772,7 +787,13 @@ class Player {
   }
 }
 
-function showPopup(res, showBtn = true) {
+function showPopup(obj) {
+  setTimeout(() => {
+    showPopupTimeout(obj.res, obj.showBtn)
+  }, obj.timeOut || 0);
+}
+
+function showPopupTimeout(res, showBtn = true) {
   const popup = document.querySelector('.full-screen');
   let b;
   if (showBtn) {

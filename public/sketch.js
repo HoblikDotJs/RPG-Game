@@ -28,6 +28,7 @@ let screenButtons = {
 	fameBtn: undefined,
 	questBtn: undefined,
 }
+
 /*
 TODO:
 FIREBALL - UPGRADES ////
@@ -87,39 +88,42 @@ function loadWorld() {
 
 // shows the "tree" of best players and their fame
 function showBestPlayers() {
+	alert("Coming soon!")
+	/*
 	console.log("Currently unavailable :(");
 	blank();
 	addBackButton();
 	changeBackground("images/screens/blank.jpg");
+	*/
 	/*
-	let bestPlayers = [];
-	firebase.database().ref("users").on("value", function (snapshot) {
-		snapshot.forEach(function (data) {
-			let user = data.val();
-			bestPlayers.push({
-				name: user.name,
-				fame: user.fame
+		let bestPlayers = [];
+		firebase.database().ref("users").on("value", function (snapshot) {
+			snapshot.forEach(function (data) {
+				let user = data.val();
+				bestPlayers.push({
+					name: user.name,
+					fame: user.fame
+				});
 			});
-		});
-		bestPlayers.sort((a, b) => {
-			return b.fame - a.fame;
-		});
-		let bp = []; //bestPlayers
-		let bpf = []; //bestPlayers fame
-		if (bestPlayers[0].name) {
-			bp.push(bestPlayers[0].name);
-			bpf.push(bestPlayers[0].fame);
-		}
-		if (bestPlayers[1].name) {
-			bp.push(bestPlayers[1].name);
-			bpf.push(bestPlayers[1].fame);
-		}
-		if (bestPlayers[2].name) {
-			bp.push(bestPlayers[2].name);
-			bpf.push(bestPlayers[2].fame);
-		}
-		console.log(bp, bpf);
-	});*/
+			bestPlayers.sort((a, b) => {
+				return b.fame - a.fame;
+			});
+			let bp = []; //bestPlayers
+			let bpf = []; //bestPlayers fame
+			if (bestPlayers[0].name) {
+				bp.push(bestPlayers[0].name);
+				bpf.push(bestPlayers[0].fame);
+			}
+			if (bestPlayers[1].name) {
+				bp.push(bestPlayers[1].name);
+				bpf.push(bestPlayers[1].fame);
+			}
+			if (bestPlayers[2].name) {
+				bp.push(bestPlayers[2].name);
+				bpf.push(bestPlayers[2].fame);
+			}
+			console.log(bp, bpf);
+		});*/
 }
 
 // redirect to quests
