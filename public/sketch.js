@@ -143,7 +143,7 @@ async function arenaFight() {
 		// waiting for another fight
 		blank();
 		addBackButton();
-		changeBackground("images/screens/L2.jpg");
+		changeBackground("images/screens/L1.jpg");
 		$("#screen").append($("<center><p id='pbTime' style=''></p></center>"));
 		$("#screen").append(progressBarCode);
 		updateArenaWaitingScreen();
@@ -169,7 +169,7 @@ function fightMonsters() {
 	} else {
 		blank();
 		addBackButton();
-		changeBackground("images/screens/L2.jpg");
+		changeBackground("images/screens/L1.jpg");
 		$("#screen").append($("<center><p id='pbTime' style=''></p></center>"));
 		$("#screen").append(progressBarCode);
 		updateMonstersWaitingScreen();
