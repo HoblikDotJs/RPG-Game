@@ -2,12 +2,13 @@ let invSelected;
 let spellSelected;
 
 function showPlayer() {
+  alert("Sorry, no background yet")
   blank();
   addBackButton();
-  changeBackground("images/screens/inventar.png");
+  changeBackground("images/screens/blank.jpg");
   invSelected = 0;
   spellSelected = 0;
-  /*let parent = $(`
+  let parent = $(`
   <div class='container' style='margin-top:13.88vh; margin-left:11.1979vw'>
     <div class='row' id='main'>
       <div class='col-lg-4' id='stats' style='position:absolute;padding:0vw;width:22.916vw;'>
@@ -27,8 +28,8 @@ function showPlayer() {
         </div>
       </div>
     </div>
-  </div>`);*/
-  let parent = $(`
+  </div>`);
+  /*let parent = $(`
   <div class='container' style='margin-top:5.95vh; margin-left:8.1979vw;'>
     <div class='row' id='main'>
       <div class='col-lg-4' id='stats' style='position:absolute;padding:0vw;width:51.1vw;'>
@@ -42,19 +43,19 @@ function showPlayer() {
         </div>
       </div>
     </div>
-  </div>`);
+  </div>`);*/
   $("#screen").append(parent);
-  //if (player.backpack.length > 0) changeInvItem();
-  //if (player.spellSlot.length > 0) changeSpell();
-  //backwardIBtn();
-  //putOnButton();
-  //forwardIBtn();
+  if (player.backpack.length > 0) changeInvItem();
+  if (player.spellSlot.length > 0) changeSpell();
+  backwardIBtn();
+  putOnButton();
+  forwardIBtn();
   //spells
-  //backwardSpellBtn();
-  //putOnSpellButton();
-  //upgradeSpellButton();
-  //forwardSpellBtn();
-  //showCharacter();
+  backwardSpellBtn();
+  putOnSpellButton();
+  upgradeSpellButton();
+  forwardSpellBtn();
+  showCharacter();
 }
 
 function changeSpell() {

@@ -266,6 +266,7 @@ class Player {
 
   doQuest(quest) {
     let NPC = this.makeNpc();
+    NPC.isPlayer = true;
     this.attack(NPC).then((result) => {
       if (result) {
         this.xp += quest.xpReward;
@@ -402,13 +403,7 @@ class Player {
       }
     }
   }
-  /*
-    readMessages() { // TODO!!
-      for (let i = 0; i < this.messages.length; i++) {
-        console.log(this.messages[i]);
-      }
-      this.messages = [];
-    }*/
+  
   //-------------------------------------------------------------------------------------
   //                                FIGHTING
   async fightInArena() {
@@ -426,6 +421,7 @@ class Player {
         })
       });
       const enemy = await result.json();
+      enemy.isPlayer = true;
       this.attack(enemy).then((result) => {
         if (result) {
           this.gold += 10;
@@ -513,7 +509,7 @@ class Player {
       myHpBarCreate();
       roundTimeBarCreate();
       enemyHpBarCreate();
-      enemyImageCreate("asmodeus the sin of lust");
+      enemyImageCreate(others);
       logCreate();
       //
       function writeToLogFriendly(str) {
@@ -533,9 +529,9 @@ class Player {
         );
       }
 
-      function enemyImageCreate(name) {
+      function enemyImageCreate(others) {
         $("#screen").append(
-          $(`<img src="images/boss/${name}.png" style="margin-top:-42.5vh;width:54.5vw;height:78vh;margin-left:6.77vw">`)
+          $(`<img src="images/boss/${others.isPlayer ? "arenaEnemy" : others.name}.png" style="margin-top:-42.5vh;width:78vh;height:78vh;margin-left:14vw">`)
         );
       }
 

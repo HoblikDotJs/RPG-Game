@@ -41,6 +41,7 @@ FAME TREE
 //                                   MAIN FUNCTION
 // loads weapons, when site loads
 function setup() {
+	alert("WORK IN PROGRESS");
 	$.getJSON("weapons.json", (json) => {
 		weapons = json;
 		loadEnemies();
@@ -63,7 +64,7 @@ function loadWorld() {
 	screenButtons.signout = $("<button class='btn btn-dark' id='signoutButt'>Sign Out</button>").click(signOut);
 	screenButtons.arenaBtn = $("<button class='btn btn-dark' id='arenaButt'>Arena</button>").click(arenaFight);
 	screenButtons.monsterBtn = $("<button class='btn btn-dark' id='monstersButt'>Monsters</button>").click(fightMonsters);
-	screenButtons.playerBtn = $("<button class='btn btn-dark' id='playerButt'>Player</button>").click(showPlayer);
+	screenButtons.playerBtn = $("<button class='btn btn-dark' id='playerButt'>Inventory</button>").click(showPlayer);
 	screenButtons.fameBtn = $("<button class='btn btn-dark' id='fameButt'>Fame</button>").click(showBestPlayers);
 	screenButtons.questBtn = $("<button class='btn btn-dark' id='questButt'>Quests</button>").click(showQuests);
 	screenButtons.showShopBtn = $("<button class='btn btn-dark' id='showShopButt'>Shop</button>").click(redirectToShop);

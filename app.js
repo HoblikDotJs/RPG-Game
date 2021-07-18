@@ -22,7 +22,7 @@ app.use(express.json({
     limit: "1mb"
 }));
 const weapons = JSON.parse(fs.readFileSync("public/weapons.json"))
-const noCooldowns = true;
+const noCooldowns = false;
 
 app.post("/login", (request, response) => {
     let found = false;
